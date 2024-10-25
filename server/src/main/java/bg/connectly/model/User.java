@@ -41,6 +41,7 @@ public class User {
     private Integer followingCount;
     private Boolean isActive;
     private Boolean isVerified;
+    private Boolean isPublic;
 
     private LocalDateTime lastLogin;
 

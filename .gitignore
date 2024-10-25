@@ -31,3 +31,28 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Build outputs (for React, Angular, or Vue projects)
+client/build/
+client/dist/
+
+# Environment variables
+client/.env
+client/.env.local
+client/.env.*.local
+
+# Logs
+client/logs/
+client/*.log
+
+# Front-end testing output
+client/coverage/
+
+# MacOS and OS-specific files
+.DS_Store
+Thumbs.db
