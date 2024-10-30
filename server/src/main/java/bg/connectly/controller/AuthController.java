@@ -4,6 +4,7 @@ import bg.connectly.dto.JwtResponse;
 import bg.connectly.dto.LoginRequest;
 import bg.connectly.dto.RegisterRequest;
 import bg.connectly.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +20,13 @@ public class AuthController {
     public AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        // Authenticate the user and generate a JWT token
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         String jwtToken = authService.authenticateUser(loginRequest);
-
-        if (jwtToken != null) {
-            return ResponseEntity.ok(new JwtResponse(jwtToken)); // Return JWT token
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-        }
+        return ResponseEntity.ok(new JwtResponse(jwtToken));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
         authService.createUser(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
