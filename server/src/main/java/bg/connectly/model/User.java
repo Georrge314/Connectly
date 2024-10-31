@@ -34,8 +34,6 @@ public class User {
     private String profilePicture;
     private String bio;
     private LocalDate dateOfBirth;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     private Integer followersCount;
     private Integer followingCount;
@@ -44,6 +42,9 @@ public class User {
     private Boolean isPublic;
 
     private LocalDateTime lastLogin;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @ElementCollection(fetch = FetchType.EAGER) // or FetchType.LAZY
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
