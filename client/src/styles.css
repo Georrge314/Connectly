@@ -1,4 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --yellow-color: #f7b267; 
+  --orange-one-color: #f79d65;
+  --orange-two-color: #f4845f;
+  --orange-three-color: #f27059;
+  --red-color: #f25c54;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/*TODO add dark mode */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

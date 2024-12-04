@@ -1,0 +1,16 @@
+.feed-post img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+.feed-post button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.feed-container {
+    padding-top: 80px;
+    height: calc(100vh - 80px);
+    overflow-y: auto; /* Enable scrolling if feed content exceeds the viewport */
+}
