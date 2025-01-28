@@ -2,7 +2,7 @@
 <nav class="navbar navbar-expand-lg navbar-desktop">
 
   <div class="container-fluid">
-    <a class="navbar-brand text-white" href="#"> Connectly</a>
+    <a class="navbar-brand text-white" href="/"> Connectly</a>
     
     <button
       class="navbar-toggler"
@@ -16,25 +16,80 @@
 
       <ul class="navbar-nav mx-auto">
         <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-home"></i> Home</a>
+          <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#"><i class="fas fa-users"></i> Groups</a>
         </li>
       </ul>
 
+
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-bell"></i></a>
+        <!-- Notifications Dropdown -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="notificationsDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="fas fa-bell"></i> Notifications
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+            <li><a class="dropdown-item" href="#">You have 3 new notifications</a></li>
+            <li><a class="dropdown-item" href="#">Friend request from John</a></li>
+            <li><a class="dropdown-item" href="#">New message in group</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="#">See all notifications</a></li>
+          </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-envelope"></i></a>
+      
+        <!-- Messages Dropdown -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="messagesDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="fas fa-envelope"></i> Messages
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messagesDropdown">
+            <li><a class="dropdown-item" href="#">Message from Alice</a></li>
+            <li><a class="dropdown-item" href="#">Reminder for meeting</a></li>
+            <li><a class="dropdown-item" href="#">Check out this link</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="#">View all messages</a></li>
+          </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-user-circle"></i></a>
+      
+        <!-- Profile Dropdown -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="profileDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="fas fa-user-circle"></i> Profile
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+            <li><a class="dropdown-item" href="#">View Profile</a></li>
+            <li><a class="dropdown-item" href="#">Account Settings</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="#">Log Out</a></li>
+          </ul>
         </li>
       </ul>
 
     </div>
+
   </div>
+  
 </nav>

@@ -16,5 +16,21 @@
 }
 
 .navbar-desktop .nav-link {
-    color: white !important;
+    color: white;
+}
+
+/* Change dropdown item hover background */
+.dropdown-item:hover {
+    background-color: var(--orange-two-color);
+    color: white;
+}
+
+/* Add spacing between icon and text */
+.nav-link i {
+    margin-right: 5px;
+}
+
+/* Customize dropdown arrow color */
+.dropdown-toggle::after {
+    color: var(--yellow-color);
 }
