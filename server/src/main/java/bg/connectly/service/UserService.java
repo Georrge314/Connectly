@@ -5,12 +5,14 @@ import bg.connectly.exception.UserNotFoundException;
 import bg.connectly.exception.UsernameAlreadyExistsException;
 import bg.connectly.model.User;
 import bg.connectly.repository.UserRepository;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -19,6 +21,20 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public Page<User> searchUsers(String searchText, Pageable pageable) {
+        return userRepository.findAll((root, query, criteriaBuilder) -> {
+            String likeSearch = "%" + searchText.toLowerCase() + "%";
+
+            Predicate usernamePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("username")), likeSearch);
+            Predicate emailPredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), likeSearch);
+            Predicate firstNamePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")), likeSearch);
+            Predicate lastNamePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")), likeSearch);
+
+            // Combine the predicates with OR
+            return criteriaBuilder.or(usernamePredicate, emailPredicate, firstNamePredicate, lastNamePredicate);
+        }, pageable);
+    }
 
     public User updateUser(EditUserDto userDto, String username) {
         User existingUser = userRepository.findByUsername(username)
@@ -75,4 +91,5 @@ public class UserService {
             throw new UsernameAlreadyExistsException("Email is already taken");
         }
     }
+
 }
