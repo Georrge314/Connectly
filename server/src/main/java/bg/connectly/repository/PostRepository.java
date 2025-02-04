@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p WHERE p.author.username = :username ORDER BY p.createdAt DESC")
     Page<Post> findByAuthorUsername(String username, Pageable pageable);
+    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

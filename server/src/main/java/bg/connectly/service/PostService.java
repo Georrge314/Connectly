@@ -1,5 +1,6 @@
 package bg.connectly.service;
 
+import bg.connectly.dto.CreateCommentDto;
 import bg.connectly.dto.CreatePostDto;
 import bg.connectly.exception.UserNotFoundException;
 import bg.connectly.model.Comment;
@@ -75,5 +76,48 @@ public class PostService {
 
     public List<Comment> getComments(Long postId) {
         return commentRepository.findByPostId(postId);
+    }
+
+    public Page<Post> getPosts(Pageable pageable) {
+        return postRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+
+    public Comment createComment(Long postId, String username, @Valid CreateCommentDto createCommentDto) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("Username not found"));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new UserNotFoundException("Post not found"));
+
+        Comment comment = new Comment();
+        comment.setContent(createCommentDto.getContent());
+        comment.setCreatedAt(LocalDateTime.now());
+        comment.setAuthor(user);
+        comment.setPost(post);
+
+        return commentRepository.save(comment);
+    }
+
+    public Comment likeComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new UserNotFoundException("Comment not found"));
+        comment.setLikesCount(comment.getLikesCount() + 1);
+        return commentRepository.save(comment);
+    }
+
+    public Comment replyToComment(Long commentId, String username,
+                                  @Valid CreateCommentDto createCommentDto) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("Username not found"));
+        Comment parentComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new UserNotFoundException("Comment not found"));
+
+        Comment reply = new Comment();
+        reply.setContent(createCommentDto.getContent());
+        reply.setCreatedAt(LocalDateTime.now());
+        reply.setAuthor(user);
+        reply.setPost(parentComment.getPost());
+        reply.setParentComment(parentComment);
+
+        return commentRepository.save(reply);
     }
 }
