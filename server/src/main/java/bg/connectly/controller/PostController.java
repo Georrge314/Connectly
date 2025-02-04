@@ -5,6 +5,7 @@ import bg.connectly.dto.CreateCommentDto;
 import bg.connectly.dto.CreatePostDto;
 import bg.connectly.model.Comment;
 import bg.connectly.model.Post;
+import bg.connectly.service.AuthService;
 import bg.connectly.service.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class PostController {
     private PostService postService;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private AuthService authService;
 
     @GetMapping("/user")
     public ResponseEntity<Page<Post>> getUserPosts(@RequestParam String username, Pageable pageable) {
@@ -40,7 +41,7 @@ public class PostController {
     @PostMapping("/add")
     public ResponseEntity<Post> createPost(@Valid @RequestBody CreatePostDto createPostDto,
                                            @RequestHeader("Authorization") String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
+        String username = authService.getUsernameFromToken(token);
         Post post = postService.createPost(createPostDto, username);
         return ResponseEntity.ok(post);
     }
@@ -49,7 +50,7 @@ public class PostController {
     public ResponseEntity<Comment> addComment(@PathVariable Long postId,
                                                  @RequestHeader("Authorization") String token,
                                                  @Valid @RequestBody CreateCommentDto createCommentDto) {
-        String username = jwtUtil.extractUsername(token.substring(7));
+        String username = authService.getUsernameFromToken(token);
         Comment comment = postService.createComment(postId, username, createCommentDto);
         return ResponseEntity.ok(comment);
     }
@@ -64,14 +65,14 @@ public class PostController {
     public ResponseEntity<Comment> replyToComment(@PathVariable Long commentId,
                                                  @RequestHeader("Authorization") String token,
                                                  @Valid @RequestBody CreateCommentDto createCommentDto) {
-        String username = jwtUtil.extractUsername(token.substring(7));
+        String username = authService.getUsernameFromToken(token);
         Comment comment = postService.replyToComment(commentId, username, createCommentDto);
         return ResponseEntity.ok(comment);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        String username = jwtUtil.extractUsername(token.substring(7));
+        String username = authService.getUsernameFromToken(token);
         postService.deletePost(id, username);
         return ResponseEntity.ok().build();
     }
@@ -80,7 +81,7 @@ public class PostController {
     public ResponseEntity<Post> updatePost(@PathVariable Long id,
                                            @RequestHeader("Authorization") String token,
                                            @Valid @RequestBody CreatePostDto updatePostDto) {
-        String username = jwtUtil.extractUsername(token.substring(7));
+        String username = authService.getUsernameFromToken(token);
         Post updatedPost = postService.updatePost(id, username, updatePostDto);
         return ResponseEntity.ok(updatedPost);
     }
