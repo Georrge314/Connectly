@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-
+/**
+ * Implementation of the AuthService interface.
+ * Provides authentication and user management services.
+ */
 @Service
 public class AuthServiceImpl implements AuthService {
     private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
@@ -37,6 +40,13 @@ public class AuthServiceImpl implements AuthService {
         this.userMapper = userMapper;
     }
 
+    /**
+     * Authenticates a user based on the provided login request.
+     *
+     * @param loginRequest the login request containing username and password
+     * @return a JWT token if authentication is successful
+     * @throws AuthenticationException if authentication fails
+     */
     @Override
     public String authenticateUser(LoginRequest loginRequest) {
         logger.info("Authenticating user: {}", loginRequest.getUsername());
@@ -56,6 +66,13 @@ public class AuthServiceImpl implements AuthService {
         return jwtUtil.generateToken(user.getUsername());
     }
 
+    /**
+     * Creates a new user based on the provided register request.
+     *
+     * @param registerRequest the register request containing user details
+     * @return a JWT token for the newly created user
+     * @throws AlreadyExistsException if the username or email is already taken
+     */
     @Override
     public String createUser(RegisterRequest registerRequest) {
         logger.info("Creating user: {}", registerRequest.getUsername());
@@ -70,11 +87,23 @@ public class AuthServiceImpl implements AuthService {
         return jwtUtil.generateToken(user.getUsername());
     }
 
+    /**
+     * Extracts the username from the provided JWT token.
+     *
+     * @param token the JWT token
+     * @return the username extracted from the token
+     */
     @Override
     public String getUsernameFromToken(String token) {
         return jwtUtil.extractUsername(token.substring(7));
     }
 
+    /**
+     * Validates the availability of the provided username.
+     *
+     * @param username the username to validate
+     * @throws AlreadyExistsException if the username is already taken
+     */
     private void validateUsernameAvailability(String username) {
         logger.info("Validating username availability: {}", username);
         userRepository.findByUsername(username).ifPresent(user -> {
@@ -82,6 +111,12 @@ public class AuthServiceImpl implements AuthService {
         });
     }
 
+    /**
+     * Validates the availability of the provided email.
+     *
+     * @param email the email to validate
+     * @throws AlreadyExistsException if the email is already registered
+     */
     private void validateEmailAvailability(String email) {
         logger.info("Validating email availability: {}", email);
         userRepository.findByEmail(email).ifPresent(user -> {
