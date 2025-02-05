@@ -1,11 +1,11 @@
 package bg.connectly.controller;
 
-import bg.connectly.configuration.JwtUtil;
 import bg.connectly.dto.CreateCommentDto;
 import bg.connectly.dto.CreatePostDto;
 import bg.connectly.model.Comment;
 import bg.connectly.model.Post;
 import bg.connectly.service.AuthService;
+import bg.connectly.service.CommentService;
 import bg.connectly.service.PostService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/post")
 public class PostController {
-    @Autowired
-    private PostService postService;
+    private final PostService postService;
+    private final CommentService commentService;
+    private final AuthService authService;
 
     @Autowired
-    private AuthService authService;
+    public PostController(PostService postService,
+                          CommentService commentService,
+                          AuthService authService) {
+        this.postService = postService;
+        this.commentService = commentService;
+        this.authService = authService;
+    }
 
     @GetMapping("/user")
     public ResponseEntity<Page<Post>> getUserPosts(@RequestParam String username, Pageable pageable) {
@@ -51,13 +58,13 @@ public class PostController {
                                                  @RequestHeader("Authorization") String token,
                                                  @Valid @RequestBody CreateCommentDto createCommentDto) {
         String username = authService.getUsernameFromToken(token);
-        Comment comment = postService.createComment(postId, username, createCommentDto);
+        Comment comment = commentService.createComment(postId, username, createCommentDto);
         return ResponseEntity.ok(comment);
     }
 
     @PostMapping("comment/{commentId}/like")
     public ResponseEntity<Comment> likeComment(@PathVariable Long commentId) {
-        Comment comment = postService.likeComment(commentId);
+        Comment comment = commentService.likeComment(commentId);
         return ResponseEntity.ok(comment);
     }
 
@@ -66,7 +73,7 @@ public class PostController {
                                                  @RequestHeader("Authorization") String token,
                                                  @Valid @RequestBody CreateCommentDto createCommentDto) {
         String username = authService.getUsernameFromToken(token);
-        Comment comment = postService.replyToComment(commentId, username, createCommentDto);
+        Comment comment = commentService.replyToComment(commentId, username, createCommentDto);
         return ResponseEntity.ok(comment);
     }
 
@@ -88,7 +95,7 @@ public class PostController {
 
     @GetMapping("/{postId}/comments")
     public ResponseEntity<List<Comment>> getComments(@PathVariable Long postId) {
-        List<Comment> comments = postService.getComments(postId);
+        List<Comment> comments = commentService.getComments(postId);
         return ResponseEntity.ok(comments);
     }
 }
