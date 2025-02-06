@@ -24,13 +24,14 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    //TODO Temporary disabled for testing purposes
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Allow public access to auth endpoints
-                        .anyRequest().authenticated()// Secure all other endpoints
+                        .anyRequest().permitAll()// Secure all other endpoints
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless session for JWT
