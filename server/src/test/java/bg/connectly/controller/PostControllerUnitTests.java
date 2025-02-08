@@ -1,7 +1,6 @@
-package bg.connectly.Controller;
+package bg.connectly.controller;
 
 import bg.connectly.configuration.JwtUtil;
-import bg.connectly.controller.PostController;
 import bg.connectly.dto.CreateCommentDto;
 import bg.connectly.dto.CreatePostDto;
 import bg.connectly.model.Comment;

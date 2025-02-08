@@ -1,7 +1,6 @@
-package bg.connectly.Controller;
+package bg.connectly.controller;
 
 import bg.connectly.configuration.JwtUtil;
-import bg.connectly.controller.AuthController;
 import bg.connectly.dto.JwtResponse;
 import bg.connectly.dto.LoginRequest;
 import bg.connectly.dto.RegisterRequest;

@@ -1,7 +1,6 @@
-package bg.connectly.Controller;
+package bg.connectly.controller;
 
 import bg.connectly.configuration.JwtUtil;
-import bg.connectly.controller.UserController;
 import bg.connectly.dto.EditUserDto;
 import bg.connectly.exception.AuthenticationException;
 import bg.connectly.model.User;
@@ -19,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
