@@ -1,6 +1,6 @@
 package bg.connectly.controller;
 
-import bg.connectly.dto.EditUserDto;
+import bg.connectly.dto.UserDto;
 import bg.connectly.model.User;
 import bg.connectly.service.AuthService;
 import bg.connectly.service.UserService;
@@ -46,7 +46,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @PutMapping("/edit")
-    public ResponseEntity<User> editUser(@Valid @RequestBody EditUserDto userDto,
+    public ResponseEntity<User> editUser(@Valid @RequestBody UserDto userDto,
                                          @RequestHeader("Authorization") String token) {
         String username = authService.getUsernameFromToken(token);
         User user = this.userService.updateUser(userDto, username);

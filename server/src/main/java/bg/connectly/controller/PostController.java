@@ -1,7 +1,7 @@
 package bg.connectly.controller;
 
-import bg.connectly.dto.CreateCommentDto;
-import bg.connectly.dto.CreatePostDto;
+import bg.connectly.dto.CommentDto;
+import bg.connectly.dto.PostDto;
 import bg.connectly.model.Comment;
 import bg.connectly.model.Post;
 import bg.connectly.service.AuthService;
@@ -79,7 +79,7 @@ public class PostController {
     /**
      * Endpoint for creating a new post.
      *
-     * @param createPostDto the data transfer object containing post details
+     * @param postDto the data transfer object containing post details
      * @param token the authorization token
      * @return the created post
      */
@@ -90,10 +90,10 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     @PostMapping("/add")
-    public ResponseEntity<Post> createPost(@Valid @RequestBody CreatePostDto createPostDto,
+    public ResponseEntity<Post> createPost(@Valid @RequestBody PostDto postDto,
                                            @RequestHeader("Authorization") String token) {
         String username = authService.getUsernameFromToken(token);
-        Post post = postService.createPost(createPostDto, username);
+        Post post = postService.createPost(postDto, username);
         return ResponseEntity.ok(post);
     }
 
@@ -136,7 +136,7 @@ public class PostController {
     @PutMapping("/update/{id}")
     public ResponseEntity<Post> updatePost(@PathVariable Long id,
                                            @RequestHeader("Authorization") String token,
-                                           @Valid @RequestBody CreatePostDto updatePostDto) {
+                                           @Valid @RequestBody PostDto updatePostDto) {
         String username = authService.getUsernameFromToken(token);
         Post updatedPost = postService.updatePost(id, username, updatePostDto);
         return ResponseEntity.ok(updatedPost);
@@ -148,7 +148,7 @@ public class PostController {
      *
      * @param postId the ID of the post to comment on
      * @param token the authorization token
-     * @param createCommentDto the data transfer object containing comment details
+     * @param commentDto the data transfer object containing comment details
      * @return the created comment
      */
     @Operation(summary = "Add a comment to a post")
@@ -160,9 +160,9 @@ public class PostController {
     @PostMapping("/{postId}/comment")
     public ResponseEntity<Comment> addComment(@PathVariable Long postId,
                                               @RequestHeader("Authorization") String token,
-                                              @Valid @RequestBody CreateCommentDto createCommentDto) {
+                                              @Valid @RequestBody CommentDto commentDto) {
         String username = authService.getUsernameFromToken(token);
-        Comment comment = commentService.createComment(postId, username, createCommentDto);
+        Comment comment = commentService.createComment(postId, username, commentDto);
         return ResponseEntity.ok(comment);
     }
 
@@ -206,7 +206,7 @@ public class PostController {
      *
      * @param commentId the ID of the comment to reply to
      * @param token the authorization token
-     * @param createCommentDto the data transfer object containing reply details
+     * @param commentDto the data transfer object containing reply details
      * @return the created reply comment
      */
     @Operation(summary = "Reply to a comment")
@@ -218,9 +218,9 @@ public class PostController {
     @PostMapping("/comment/{commentId}/reply")
     public ResponseEntity<Comment> replyToComment(@PathVariable Long commentId,
                                                   @RequestHeader("Authorization") String token,
-                                                  @Valid @RequestBody CreateCommentDto createCommentDto) {
+                                                  @Valid @RequestBody CommentDto commentDto) {
         String username = authService.getUsernameFromToken(token);
-        Comment comment = commentService.replyToComment(commentId, username, createCommentDto);
+        Comment comment = commentService.replyToComment(commentId, username, commentDto);
         return ResponseEntity.ok(comment);
     }
 }

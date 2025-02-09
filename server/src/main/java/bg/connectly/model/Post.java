@@ -28,11 +28,6 @@ public class Post {
     @Column(name = "media_url")
     private List<String> mediaUrls; // URLs of images or videos
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User author;
@@ -56,4 +51,9 @@ public class Post {
     private String location; // Geotagging
 
     private String postType; // e.g., text, image, video, poll
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

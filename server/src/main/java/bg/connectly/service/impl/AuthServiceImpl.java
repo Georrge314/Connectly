@@ -1,8 +1,8 @@
 package bg.connectly.service.impl;
 
 import bg.connectly.configuration.JwtUtil;
-import bg.connectly.dto.LoginRequest;
-import bg.connectly.dto.RegisterRequest;
+import bg.connectly.dto.LoginRequestDto;
+import bg.connectly.dto.RegisterRequestDto;
 import bg.connectly.exception.AuthenticationException;
 import bg.connectly.exception.AlreadyExistsException;
 import bg.connectly.mapper.UserMapper;
@@ -43,25 +43,25 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Authenticates a user based on the provided login request.
      *
-     * @param loginRequest the login request containing username and password
+     * @param loginRequestDto the login request containing username and password
      * @return a JWT token if authentication is successful
      * @throws AuthenticationException if authentication fails
      */
     @Override
-    public String authenticateUser(LoginRequest loginRequest) {
-        logger.info("Authenticating user: {}", loginRequest.getUsername());
+    public String authenticateUser(LoginRequestDto loginRequestDto) {
+        logger.info("Authenticating user: {}", loginRequestDto.getUsername());
         User user = userRepository
-                .findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new AuthenticationException("Username " + loginRequest.getUsername() + " not found"));
+                .findByUsername(loginRequestDto.getUsername())
+                .orElseThrow(() -> new AuthenticationException("Username " + loginRequestDto.getUsername() + " not found"));
 
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            logger.warn("Authentication failed for user: {}", loginRequest.getUsername());
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            logger.warn("Authentication failed for user: {}", loginRequestDto.getUsername());
             throw new AuthenticationException("Incorrect password");
         }
 
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
-        logger.info("User authenticated successfully: {}", loginRequest.getUsername());
+        logger.info("User authenticated successfully: {}", loginRequestDto.getUsername());
 
         return jwtUtil.generateToken(user.getUsername());
     }
@@ -69,21 +69,20 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Creates a new user based on the provided register request.
      *
-     * @param registerRequest the register request containing user details
+     * @param registerRequestDto the register request containing user details
      * @return a JWT token for the newly created user
      * @throws AlreadyExistsException if the username or email is already taken
      */
     @Override
-    public String createUser(RegisterRequest registerRequest) {
-        logger.info("Creating user: {}", registerRequest.getUsername());
-        validateUsernameAvailability(registerRequest.getUsername());
-        validateEmailAvailability(registerRequest.getEmail());
+    public String createUser(RegisterRequestDto registerRequestDto) {
+        logger.info("Creating user: {}", registerRequestDto.getUsername());
+        validateUsernameAvailability(registerRequestDto.getUsername());
+        validateEmailAvailability(registerRequestDto.getEmail());
 
-        User user = userMapper.toUser(registerRequest);
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        User user = userMapper.toUser(registerRequestDto);
         userRepository.save(user);
 
-        logger.info("User created successfully: {}", registerRequest.getUsername());
+        logger.info("User created successfully: {}", registerRequestDto.getUsername());
         return jwtUtil.generateToken(user.getUsername());
     }
 

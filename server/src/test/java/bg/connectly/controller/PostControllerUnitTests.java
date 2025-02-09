@@ -1,8 +1,8 @@
 package bg.connectly.controller;
 
 import bg.connectly.configuration.JwtUtil;
-import bg.connectly.dto.CreateCommentDto;
-import bg.connectly.dto.CreatePostDto;
+import bg.connectly.dto.CommentDto;
+import bg.connectly.dto.PostDto;
 import bg.connectly.model.Comment;
 import bg.connectly.model.Post;
 import bg.connectly.service.AuthService;
@@ -96,18 +96,18 @@ public class PostControllerUnitTests {
     @Test
     @Order(2)
     void createPostReturnsCreatedPost() throws Exception {
-        CreatePostDto createPostDto = new CreatePostDto();
-        createPostDto.setContent("New Post");
+        PostDto postDto = new PostDto();
+        postDto.setContent("New Post");
         Post post = new Post();
         post.setContent("New Post");
 
         when(authService.getUsernameFromToken(anyString())).thenReturn("testuser");
-        when(postService.createPost(any(CreatePostDto.class), anyString())).thenReturn(post);
+        when(postService.createPost(any(PostDto.class), anyString())).thenReturn(post);
 
         mockMvc.perform(post("/api/post/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer valid-token")
-                        .content(objectMapper.writeValueAsString(createPostDto)))
+                        .content(objectMapper.writeValueAsString(postDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").value("New Post"));
     }
@@ -126,13 +126,13 @@ public class PostControllerUnitTests {
     @Test
     @Order(4)
     void updatePostReturnsUpdatedPost() throws Exception {
-        CreatePostDto updatePostDto = new CreatePostDto();
+        PostDto updatePostDto = new PostDto();
         updatePostDto.setContent("Updated Post");
         Post updatedPost = new Post();
         updatedPost.setContent("Updated Post");
 
         when(authService.getUsernameFromToken(anyString())).thenReturn("testuser");
-        when(postService.updatePost(anyLong(), anyString(), any(CreatePostDto.class))).thenReturn(updatedPost);
+        when(postService.updatePost(anyLong(), anyString(), any(PostDto.class))).thenReturn(updatedPost);
 
         mockMvc.perform(put("/api/post/update/{id}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -145,18 +145,18 @@ public class PostControllerUnitTests {
     @Test
     @Order(5)
     void addCommentReturnsCreatedComment() throws Exception {
-        CreateCommentDto createCommentDto = new CreateCommentDto();
-        createCommentDto.setContent("New Comment");
+        CommentDto commentDto = new CommentDto();
+        commentDto.setContent("New Comment");
         Comment comment = new Comment();
         comment.setContent("New Comment");
 
         when(authService.getUsernameFromToken(anyString())).thenReturn("testuser");
-        when(commentService.createComment(anyLong(), anyString(), any(CreateCommentDto.class))).thenReturn(comment);
+        when(commentService.createComment(anyLong(), anyString(), any(CommentDto.class))).thenReturn(comment);
 
         mockMvc.perform(post("/api/post/{postId}/comment", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer valid-token")
-                        .content(objectMapper.writeValueAsString(createCommentDto)))
+                        .content(objectMapper.writeValueAsString(commentDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").value("New Comment"));
     }
@@ -191,18 +191,18 @@ public class PostControllerUnitTests {
     @Test
     @Order(8)
     void replyToCommentReturnsCreatedReply() throws Exception {
-        CreateCommentDto createCommentDto = new CreateCommentDto();
-        createCommentDto.setContent("Reply Comment");
+        CommentDto commentDto = new CommentDto();
+        commentDto.setContent("Reply Comment");
         Comment comment = new Comment();
         comment.setContent("Reply Comment");
 
         when(authService.getUsernameFromToken(anyString())).thenReturn("testuser");
-        when(commentService.replyToComment(anyLong(), anyString(), any(CreateCommentDto.class))).thenReturn(comment);
+        when(commentService.replyToComment(anyLong(), anyString(), any(CommentDto.class))).thenReturn(comment);
 
         mockMvc.perform(post("/api/post/comment/{commentId}/reply", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer valid-token")
-                        .content(objectMapper.writeValueAsString(createCommentDto)))
+                        .content(objectMapper.writeValueAsString(commentDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").value("Reply Comment"));
     }

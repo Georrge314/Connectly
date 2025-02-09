@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class CreatePostDto {
+public class PostDto {
     @NotBlank(message = "Content cannot be empty")
     @Size(max = 1000, message = "Content cannot exceed 1000 characters")
     private String content;

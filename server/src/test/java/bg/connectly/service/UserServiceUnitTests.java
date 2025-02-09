@@ -1,9 +1,10 @@
 package bg.connectly.service;
 
 
-import bg.connectly.dto.EditUserDto;
+import bg.connectly.dto.UserDto;
 import bg.connectly.exception.AlreadyExistsException;
 import bg.connectly.exception.NotFoundException;
+import bg.connectly.mapper.UserMapper;
 import bg.connectly.model.User;
 import bg.connectly.repository.UserRepository;
 import bg.connectly.service.impl.UserServiceImpl;
@@ -36,12 +37,13 @@ public class UserServiceUnitTests {
     private UserRepository userRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
-
+    @Mock
+    private UserMapper userMapper;
     @InjectMocks
     private UserServiceImpl userService;
 
     private User user;
-    private EditUserDto editUserDto;
+    private UserDto userDto;
 
     @BeforeEach
     void setUp() {
@@ -49,10 +51,10 @@ public class UserServiceUnitTests {
         user.setUsername("testuser");
         user.setEmail("testuser@example.com");
 
-        editUserDto = new EditUserDto();
-        editUserDto.setUsername("newusername");
-        editUserDto.setEmail("newemail@example.com");
-        editUserDto.setPassword("newpassword");
+        userDto = new UserDto();
+        userDto.setUsername("newusername");
+        userDto.setEmail("newemail@example.com");
+        userDto.setPassword("newpassword");
     }
 
     @Test
@@ -71,10 +73,13 @@ public class UserServiceUnitTests {
     @Test
     void updateUserSuccess() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user), Optional.empty());
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User updatedUser = userService.updateUser(editUserDto, "testuser");
+        user.setUsername(userDto.getUsername());
+        user.setEmail(userDto.getEmail());
+        when(userMapper.updateUserFromDto(any(UserDto.class), any(User.class))).thenReturn(user);
+
+        User updatedUser = userService.updateUser(userDto, "testuser");
 
         assertNotNull(updatedUser);
         assertEquals("newusername", updatedUser.getUsername());
@@ -86,7 +91,7 @@ public class UserServiceUnitTests {
     void updateUserNotFound() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> userService.updateUser(editUserDto, "testuser"));
+        assertThrows(NotFoundException.class, () -> userService.updateUser(userDto, "testuser"));
     }
 
     @Test
@@ -94,7 +99,7 @@ public class UserServiceUnitTests {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
         when(userRepository.findByUsername("newusername")).thenReturn(Optional.of(new User()));
 
-        assertThrows(AlreadyExistsException.class, () -> userService.updateUser(editUserDto, "testuser"));
+        assertThrows(AlreadyExistsException.class, () -> userService.updateUser(userDto, "testuser"));
     }
 
     @Test
@@ -102,6 +107,6 @@ public class UserServiceUnitTests {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user), Optional.empty());
         when(userRepository.findByEmail("newemail@example.com")).thenReturn(Optional.of(new User()));
 
-        assertThrows(AlreadyExistsException.class, () -> userService.updateUser(editUserDto, "testuser"));
+        assertThrows(AlreadyExistsException.class, () -> userService.updateUser(userDto, "testuser"));
     }
 }

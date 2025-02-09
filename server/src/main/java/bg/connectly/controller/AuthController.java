@@ -1,8 +1,8 @@
 package bg.connectly.controller;
 
 import bg.connectly.dto.JwtResponse;
-import bg.connectly.dto.LoginRequest;
-import bg.connectly.dto.RegisterRequest;
+import bg.connectly.dto.LoginRequestDto;
+import bg.connectly.dto.RegisterRequestDto;
 import bg.connectly.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +35,7 @@ public class AuthController {
     /**
      * Endpoint for authenticating a user and generating a JWT token.
      *
-     * @param loginRequest the login request containing username and password
+     * @param loginRequestDto the login request containing username and password
      * @return a ResponseEntity containing the JWT token
      */
     @Operation(summary = "Authenticate user and generate JWT token")
@@ -44,8 +44,8 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Invalid credentials")
     })
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
-        String jwtToken = authService.authenticateUser(loginRequest);
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+        String jwtToken = authService.authenticateUser(loginRequestDto);
         return ResponseEntity.ok(new JwtResponse(jwtToken));
     }
 
@@ -53,7 +53,7 @@ public class AuthController {
     /**
      * Endpoint for registering a new user and generating a JWT token.
      *
-     * @param registerRequest the registration request containing user details
+     * @param registerRequestDto the registration request containing user details
      * @return a ResponseEntity containing the JWT token
      */
     @Operation(summary = "Register a new user and generate JWT token")
@@ -63,8 +63,8 @@ public class AuthController {
             @ApiResponse(responseCode = "409", description = "Username or email already exists"),
     })
     @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        String jwtToken = authService.createUser(registerRequest);
+    public ResponseEntity<JwtResponse> register(@Valid @RequestBody RegisterRequestDto registerRequestDto) {
+        String jwtToken = authService.createUser(registerRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new JwtResponse(jwtToken));
     }
 }

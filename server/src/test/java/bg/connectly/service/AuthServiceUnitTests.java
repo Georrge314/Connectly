@@ -2,8 +2,8 @@ package bg.connectly.service;
 
 
 import bg.connectly.configuration.JwtUtil;
-import bg.connectly.dto.LoginRequest;
-import bg.connectly.dto.RegisterRequest;
+import bg.connectly.dto.LoginRequestDto;
+import bg.connectly.dto.RegisterRequestDto;
 import bg.connectly.exception.AlreadyExistsException;
 import bg.connectly.exception.AuthenticationException;
 import bg.connectly.mapper.UserMapper;
@@ -45,8 +45,8 @@ public class AuthServiceUnitTests {
     private AuthServiceImpl authService;
 
     private User user;
-    private LoginRequest loginRequest;
-    private RegisterRequest registerRequest;
+    private LoginRequestDto loginRequestDto;
+    private RegisterRequestDto registerRequestDto;
 
     @BeforeEach
     void setUp() {
@@ -54,9 +54,9 @@ public class AuthServiceUnitTests {
         user.setUsername("testuser");
         user.setPassword("encodedPassword");
 
-        loginRequest = new LoginRequest("testuser", "password");
-        registerRequest = new RegisterRequest(
-                "newuser", "newuser@example.com", "password", "password");
+        loginRequestDto = new LoginRequestDto("testuser", "password");
+        registerRequestDto = new RegisterRequestDto(
+                "newuser", "newuser@example.com", "password");
 
     }
 
@@ -64,10 +64,10 @@ public class AuthServiceUnitTests {
     @Test
     void authenticateUserSuccess() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
         when(jwtUtil.generateToken(anyString())).thenReturn("jwtToken");
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-        String token = authService.authenticateUser(loginRequest);
+        String token = authService.authenticateUser(loginRequestDto);
 
         assertEquals("jwtToken", token);
         verify(userRepository).save(user);
@@ -78,25 +78,24 @@ public class AuthServiceUnitTests {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
-        assertThrows(AuthenticationException.class, () -> authService.authenticateUser(loginRequest));
+        assertThrows(AuthenticationException.class, () -> authService.authenticateUser(loginRequestDto));
     }
 
     @Test
     void authenticateUserFailsWithNotExistingUsername() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(AuthenticationException.class, () -> authService.authenticateUser(loginRequest));
+        assertThrows(AuthenticationException.class, () -> authService.authenticateUser(loginRequestDto));
     }
 
     @Test
     void createUserSuccess() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-        when(userMapper.toUser(any(RegisterRequest.class))).thenReturn(user);
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(userMapper.toUser(any(RegisterRequestDto.class))).thenReturn(user);
         when(jwtUtil.generateToken(anyString())).thenReturn("jwtToken");
 
-        String token = authService.createUser(registerRequest);
+        String token = authService.createUser(registerRequestDto);
 
         assertEquals("jwtToken", token);
         verify(userRepository).save(user);
@@ -106,14 +105,14 @@ public class AuthServiceUnitTests {
     void createUserUsernameExists() {
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
 
-        assertThrows(AlreadyExistsException.class, () -> authService.createUser(registerRequest));
+        assertThrows(AlreadyExistsException.class, () -> authService.createUser(registerRequestDto));
     }
 
     @Test
     void createUserEmailExists() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
-        assertThrows(AlreadyExistsException.class, () -> authService.createUser(registerRequest));
+        assertThrows(AlreadyExistsException.class, () -> authService.createUser(registerRequestDto));
     }
 
     @Test

@@ -1,7 +1,7 @@
 package bg.connectly.controller;
 
 import bg.connectly.configuration.JwtUtil;
-import bg.connectly.dto.EditUserDto;
+import bg.connectly.dto.UserDto;
 import bg.connectly.exception.AuthenticationException;
 import bg.connectly.model.User;
 import bg.connectly.service.AuthService;
@@ -75,18 +75,18 @@ public class UserControllerUnitTests {
     @Test
     @Order(1)
     void editUserWithValidDataReturnsUpdatedUser() throws Exception {
-        EditUserDto editUserDto = new EditUserDto();
-        editUserDto.setUsername("new-username");
+        UserDto userDto = new UserDto();
+        userDto.setUsername("new-username");
         User updatedUser = new User();
         updatedUser.setUsername("new-username");
 
         when(authService.getUsernameFromToken(anyString())).thenReturn("existing-username");
-        when(userService.updateUser(any(EditUserDto.class), anyString())).thenReturn(updatedUser);
+        when(userService.updateUser(any(UserDto.class), anyString())).thenReturn(updatedUser);
 
         mockMvc.perform(put("/api/user/edit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer valid-token")
-                        .content(objectMapper.writeValueAsString(editUserDto)))
+                        .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("new-username"));
     }
@@ -94,28 +94,28 @@ public class UserControllerUnitTests {
     @Test
     @Order(2)
     void editUserWithInvalidDataReturnsBadRequest() throws Exception {
-        EditUserDto editUserDto = new EditUserDto();
-        editUserDto.setUsername("JK"); //Invalid username
+        UserDto userDto = new UserDto();
+        userDto.setUsername("JK"); //Invalid username
 
         mockMvc.perform(put("/api/user/edit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer valid-token")
-                        .content(objectMapper.writeValueAsString(editUserDto)))
+                        .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @Order(3)
     void editUserWithInvalidTokenReturnsUnauthorized() throws Exception {
-        EditUserDto editUserDto = new EditUserDto();
-        editUserDto.setUsername("new-username");
+        UserDto userDto = new UserDto();
+        userDto.setUsername("new-username");
 
         when(authService.getUsernameFromToken(anyString())).thenThrow(new AuthenticationException("Unauthorized"));
 
         mockMvc.perform(put("/api/user/edit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer invalid-token")
-                        .content(objectMapper.writeValueAsString(editUserDto)))
+                        .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isUnauthorized());
     }
 

@@ -1,8 +1,9 @@
 package bg.connectly.service.impl;
 
-import bg.connectly.dto.EditUserDto;
+import bg.connectly.dto.UserDto;
 import bg.connectly.exception.AlreadyExistsException;
 import bg.connectly.exception.NotFoundException;
+import bg.connectly.mapper.UserMapper;
 import bg.connectly.model.User;
 import bg.connectly.repository.UserRepository;
 import bg.connectly.service.UserService;
@@ -12,10 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 /**
  * Service class for managing user-related operations.
@@ -26,13 +25,13 @@ import java.time.LocalDateTime;
 public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    private final UserMapper userMapper;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository) {
+        this.userMapper = userMapper;
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -70,60 +69,24 @@ public class UserServiceImpl implements UserService {
      * @return the updated user
      */
     @Override
-    public User updateUser(EditUserDto userDto, String username) {
+    public User updateUser(UserDto userDto, String username) {
         logger.info("Updating user: {}", username);
         User existingUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
 
-        updateExistingUserInfo(existingUser, userDto);
-        existingUser.setUpdatedAt(LocalDateTime.now());
+        // Validate the availability of the new username and email if they are changed
+        if (userDto.getUsername() != null && !userDto.getUsername().equals(existingUser.getUsername())) {
+            validateUsernameAvailability(userDto.getUsername());
+        }
+        if (userDto.getEmail() != null && !userDto.getEmail().equals(existingUser.getEmail())) {
+            validateEmailAvailability(userDto.getEmail());
+        }
 
+        existingUser = userMapper.updateUserFromDto(userDto, existingUser);
         logger.info("User updated successfully: {}", username);
         return userRepository.save(existingUser);
     }
 
-    /**
-     * Updates the existing user information with the data from the EditUserDto.
-     * Validates the availability of the new username and email if they are changed.
-     *
-     * @param existingUser the existing user to update
-     * @param userDto      the user data transfer object containing updated information
-     */
-    private void updateExistingUserInfo(User existingUser, EditUserDto userDto) {
-        if (userDto.getUsername() != null && !userDto.getUsername().equals(existingUser.getUsername())) {
-            validateUsernameAvailability(userDto.getUsername());
-            existingUser.setUsername(userDto.getUsername());
-        }
-
-        if (userDto.getEmail() != null && !userDto.getEmail().equals(existingUser.getEmail())) {
-            validateEmailAvailability(userDto.getEmail());
-            existingUser.setEmail(userDto.getEmail());
-        }
-
-        if (userDto.getPassword() != null) {
-            existingUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        }
-
-        if (userDto.getFirstName() != null) {
-            existingUser.setFirstName(userDto.getFirstName());
-        }
-
-        if (userDto.getLastName() != null) {
-            existingUser.setLastName(userDto.getLastName());
-        }
-
-        if (userDto.getBio() != null) {
-            existingUser.setBio(userDto.getBio());
-        }
-
-        if (userDto.getProfilePicture() != null) {
-            existingUser.setProfilePicture(userDto.getProfilePicture());
-        }
-
-        if (userDto.getDateOfBirth() != null) {
-            existingUser.setDateOfBirth(userDto.getDateOfBirth());
-        }
-    }
 
     /**
      * Validates the availability of the provided username.

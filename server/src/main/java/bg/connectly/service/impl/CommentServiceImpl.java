@@ -1,6 +1,6 @@
 package bg.connectly.service.impl;
 
-import bg.connectly.dto.CreateCommentDto;
+import bg.connectly.dto.CommentDto;
 import bg.connectly.exception.NotFoundException;
 import bg.connectly.mapper.CommentMapper;
 import bg.connectly.model.Comment;
@@ -61,24 +61,19 @@ public class CommentServiceImpl implements CommentService {
      *
      * @param postId           the ID of the post
      * @param username         the username of the author
-     * @param createCommentDto the data transfer object containing comment details
+     * @param commentDto the data transfer object containing comment details
      * @return the created comment
      */
     @Override
     @Transactional
-    public Comment createComment(Long postId, String username, @Valid CreateCommentDto createCommentDto) {
+    public Comment createComment(Long postId, String username, @Valid CommentDto commentDto) {
         logger.info("Creating comment for post id: {} by username: {}", postId, username);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("Post not found"));
 
-        Comment comment = commentMapper.toComment(createCommentDto);
-
-        comment.setAuthor(user);
-        comment.setPost(post);
-
-        post.getComments().add(comment);
+        Comment comment = commentMapper.toComment(commentDto, user, post, null);
         postRepository.save(post);
 
         return commentRepository.save(comment);
@@ -104,12 +99,12 @@ public class CommentServiceImpl implements CommentService {
      *
      * @param commentId        the ID of the comment to reply to
      * @param username         the username of the author
-     * @param createCommentDto the data transfer object containing reply details
+     * @param commentDto the data transfer object containing reply details
      * @return the created reply comment
      */
     @Override
     @Transactional
-    public Comment replyToComment(Long commentId, String username, @Valid CreateCommentDto createCommentDto) {
+    public Comment replyToComment(Long commentId, String username, @Valid CommentDto commentDto) {
         logger.info("Replying to comment with id: {} by username: {}", commentId, username);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
@@ -117,12 +112,13 @@ public class CommentServiceImpl implements CommentService {
         Comment parentComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found"));
 
-        Comment reply = commentMapper.toComment(createCommentDto);
-        reply.setAuthor(user);
-        reply.setPost(parentComment.getPost());
-        reply.setParentComment(parentComment);
+        Comment reply = commentMapper.toComment(commentDto, user, parentComment.getPost(), parentComment);
 
-        parentComment.getReplies().add(reply);
+        if (parentComment.getReplies() == null) {
+            parentComment.setReplies(List.of(reply));
+        } else {
+            parentComment.getReplies().add(reply);
+        }
         commentRepository.save(parentComment);
 
         return commentRepository.save(reply);

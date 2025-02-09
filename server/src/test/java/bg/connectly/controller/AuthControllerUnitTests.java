@@ -2,8 +2,8 @@ package bg.connectly.controller;
 
 import bg.connectly.configuration.JwtUtil;
 import bg.connectly.dto.JwtResponse;
-import bg.connectly.dto.LoginRequest;
-import bg.connectly.dto.RegisterRequest;
+import bg.connectly.dto.LoginRequestDto;
+import bg.connectly.dto.RegisterRequestDto;
 import bg.connectly.exception.AlreadyExistsException;
 import bg.connectly.exception.AuthenticationException;
 import bg.connectly.service.AuthService;
@@ -66,14 +66,14 @@ public class AuthControllerUnitTests {
     @Test
     @Order(1)
     void loginWithValidCredentialsReturnsJwtToken() throws Exception {
-        LoginRequest loginRequest = new LoginRequest("test-user", "test-password");
+        LoginRequestDto loginRequestDto = new LoginRequestDto("test-user", "test-password");
         JwtResponse jwtResponse = new JwtResponse("valid-token");
 
-        when(authService.authenticateUser(any(LoginRequest.class))).thenReturn(jwtResponse.getToken());
+        when(authService.authenticateUser(any(LoginRequestDto.class))).thenReturn(jwtResponse.getToken());
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest))) //JSON request
+                        .content(objectMapper.writeValueAsString(loginRequestDto))) //JSON request
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").value("valid-token"));
     }
@@ -81,32 +81,31 @@ public class AuthControllerUnitTests {
     @Test
     @Order(2)
     void loginWithInvalidCredentialsReturnsUnauthorized() throws Exception {
-        LoginRequest loginRequest = new LoginRequest("invalid-username", "invalid-password");
+        LoginRequestDto loginRequestDto = new LoginRequestDto("invalid-username", "invalid-password");
 
-        when(authService.authenticateUser(any(LoginRequest.class)))
+        when(authService.authenticateUser(any(LoginRequestDto.class)))
                 .thenThrow(new AuthenticationException("Invalid credentials"));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest))) //JSON request
+                        .content(objectMapper.writeValueAsString(loginRequestDto))) //JSON request
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     @Order(3)
     void registerWithValidDetailsReturnsJwtToken() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest(
+        RegisterRequestDto registerRequestDto = new RegisterRequestDto(
                 "new-user",
                 "email@example.com",
-                "new-password",
                 "new-password");
         JwtResponse jwtResponse = new JwtResponse("valid-jwt-token");
 
-        when(authService.createUser(any(RegisterRequest.class))).thenReturn(jwtResponse.getToken());
+        when(authService.createUser(any(RegisterRequestDto.class))).thenReturn(jwtResponse.getToken());
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        .content(objectMapper.writeValueAsString(registerRequestDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").value("valid-jwt-token"));
     }
@@ -114,40 +113,38 @@ public class AuthControllerUnitTests {
     @Test
     @Order(4)
     void registerWithExistingUsernameOrEmailReturnsConflict() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest(
+        RegisterRequestDto registerRequestDto = new RegisterRequestDto(
                 "new-user",
                 "email@example.com",
-                "new-password",
                 "new-password");
 
-        when(authService.createUser(any(RegisterRequest.class)))
+        when(authService.createUser(any(RegisterRequestDto.class)))
                 .thenThrow(new AlreadyExistsException("Username or email already exists"));
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        .content(objectMapper.writeValueAsString(registerRequestDto)))
                 .andExpect(status().isConflict());
     }
 
     @Test
     @Order(5)
     void registerWithInvalidUsernameReturnsBadRequest() throws Exception {
-        RegisterRequest registerRequest = new RegisterRequest(
+        RegisterRequestDto registerRequestDto = new RegisterRequestDto(
                 "JK", // invalid username (size must be at least 3 symbols)
                 "email@example.com",
-                "new-password",
                 "new-password");
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        .content(objectMapper.writeValueAsString(registerRequestDto)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @Order(6)
     void registerWithInvalidJsonReturnsBadRequest() throws Exception {
-        String invalidJson = "{\"username\":\"user\", \"email\":\"email@example.com\", \"password\":\"password\"}"; // Missing confirmPassword
+        String invalidJson = "{\"username\":\"user\", \"email\":\"email@example.com\"}"; // Missing password
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)

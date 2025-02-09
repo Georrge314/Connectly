@@ -1,6 +1,6 @@
 package bg.connectly.service.impl;
 
-import bg.connectly.dto.CreatePostDto;
+import bg.connectly.dto.PostDto;
 import bg.connectly.exception.NotFoundException;
 import bg.connectly.mapper.PostMapper;
 import bg.connectly.model.Post;
@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 
 /**
  * Service class for managing post-related operations.
@@ -56,17 +55,17 @@ public class PostServiceImpl implements PostService {
     /**
      * Creates a new post for the given username.
      *
-     * @param createPostDto the data transfer object containing post details
+     * @param postDto the data transfer object containing post details
      * @param username      the username of the author
      * @return the created post
      */
     @Override
-    public Post createPost(@Valid CreatePostDto createPostDto, String username) {
+    public Post createPost(@Valid PostDto postDto, String username) {
         logger.info("Creating post for username: {}", username);
         User existingUser = userRepository
                 .findByUsername(username).orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
 
-        Post post = postMapper.toPost(createPostDto, existingUser);
+        Post post = postMapper.toPost(postDto, existingUser);
         return postRepository.save(post);
     }
 
@@ -104,7 +103,7 @@ public class PostServiceImpl implements PostService {
      */
     @Override
     @Transactional
-    public Post updatePost(Long id, String username, @Valid CreatePostDto updatePostDto) {
+    public Post updatePost(Long id, String username, @Valid PostDto updatePostDto) {
         logger.info("Updating post with id: {} for username: {}", id, username);
         User existingUser = userRepository
                 .findByUsername(username).orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
@@ -116,10 +115,12 @@ public class PostServiceImpl implements PostService {
             throw new NotFoundException("Post not found");
         }
 
-        postMapper.updatePostFromDto(updatePostDto, existingPost);
-        existingPost.setUpdatedAt(LocalDateTime.now());
-
-        return postRepository.save(existingPost);
+        boolean isUpdated = postMapper.updatePostFromDto(updatePostDto, existingPost);
+        if (isUpdated) {
+            logger.info("Post updated successfully: {}", id);
+            return postRepository.save(existingPost);
+        }
+        return existingPost;
     }
 
     /**
