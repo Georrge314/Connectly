@@ -1,23 +1,44 @@
 <div class="container register-container my-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-12">
-        <div class="card shadow">
-          <div class="card-body">
-            <!-- Registration Header -->
-            <h3 class="text-center mb-4">Register</h3>
-  
-            <!-- Full Name Field -->
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-12">
+      <div class="card shadow">
+        <div class="card-body">
+          <!-- Registration Header -->
+          <h3 class="text-center mb-4">Register</h3>
+
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <!-- First Name Field -->
             <div class="mb-3">
-              <label for="fullName" class="form-label">Full Name</label>
+              <label for="firstName" class="form-label">First Name</label>
               <input
                 type="text"
-                id="fullName"
+                id="firstName"
                 class="form-control"
-                placeholder="Enter your full name"
+                formControlName="firstName"
+                placeholder="Enter your first name"
                 required
               />
+              <div *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="text-danger">
+                First name is required and must be at least 2 characters long.
+              </div>
             </div>
-  
+
+            <!-- Last Name Field -->
+            <div class="mb-3">
+              <label for="lastName" class="form-label">Last Name</label>
+              <input
+                type="text"
+                id="lastName"
+                class="form-control"
+                formControlName="lastName"
+                placeholder="Enter your last name"
+                required
+              />
+              <div *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" class="text-danger">
+                Last name is required and must be at least 2 characters long.
+              </div>
+            </div>
+
             <!-- Email Field -->
             <div class="mb-3">
               <label for="email" class="form-label">Email Address</label>
@@ -25,11 +46,15 @@
                 type="email"
                 id="email"
                 class="form-control"
+                formControlName="email"
                 placeholder="Enter your email"
                 required
               />
+              <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-danger">
+                A valid email address is required.
+              </div>
             </div>
-  
+
             <!-- Password Field -->
             <div class="mb-3">
               <label for="password" class="form-label">Password</label>
@@ -37,11 +62,15 @@
                 type="password"
                 id="password"
                 class="form-control"
+                formControlName="password"
                 placeholder="Enter your password"
                 required
               />
+              <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-danger">
+                Password is required and must be at least 6 characters long.
+              </div>
             </div>
-  
+
             <!-- Confirm Password Field -->
             <div class="mb-3">
               <label for="confirmPassword" class="form-label">Confirm Password</label>
@@ -49,24 +78,34 @@
                 type="password"
                 id="confirmPassword"
                 class="form-control"
+                formControlName="confirmPassword"
                 placeholder="Confirm your password"
                 required
               />
+              <div *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched" class="text-danger">
+                Passwords do not match.
+              </div>
             </div>
-  
+
             <!-- Register Button -->
             <div class="d-grid">
-              <button class="btn btn-primary">Register</button>
+              <button
+                class="btn btn-primary"
+                type="submit"
+                [disabled]="registerForm.invalid"
+              >
+                Register
+              </button>
             </div>
-  
-            <!-- Login Option -->
-            <p class="text-center mt-3">
-              Already have an account?
-              <a routerLink="/login" class="text-decoration-none">Login</a>
-            </p>
-          </div>
+          </form>
+
+          <!-- Login Option -->
+          <p class="text-center mt-3">
+            Already have an account?
+            <a routerLink="/login" class="text-decoration-none">Login</a>
+          </p>
         </div>
       </div>
     </div>
   </div>
-  
+</div>
