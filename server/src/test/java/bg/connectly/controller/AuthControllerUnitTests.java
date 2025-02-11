@@ -66,7 +66,7 @@ public class AuthControllerUnitTests {
     @Test
     @Order(1)
     void loginWithValidCredentialsReturnsJwtToken() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto("test-user", "test-password");
+        LoginRequestDto loginRequestDto = new LoginRequestDto("test-user@abv.bg", "test-password");
         JwtResponse jwtResponse = new JwtResponse("valid-token");
 
         when(authService.authenticateUser(any(LoginRequestDto.class))).thenReturn(jwtResponse.getToken());
@@ -81,7 +81,7 @@ public class AuthControllerUnitTests {
     @Test
     @Order(2)
     void loginWithInvalidCredentialsReturnsUnauthorized() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto("invalid-username", "invalid-password");
+        LoginRequestDto loginRequestDto = new LoginRequestDto("invalid-email", "invalid-password");
 
         when(authService.authenticateUser(any(LoginRequestDto.class)))
                 .thenThrow(new AuthenticationException("Invalid credentials"));
@@ -96,7 +96,6 @@ public class AuthControllerUnitTests {
     @Order(3)
     void registerWithValidDetailsReturnsJwtToken() throws Exception {
         RegisterRequestDto registerRequestDto = new RegisterRequestDto(
-                "new-user",
                 "email@example.com",
                 "new-password");
         JwtResponse jwtResponse = new JwtResponse("valid-jwt-token");
@@ -112,14 +111,13 @@ public class AuthControllerUnitTests {
 
     @Test
     @Order(4)
-    void registerWithExistingUsernameOrEmailReturnsConflict() throws Exception {
+    void registerWithExistingEmailOrEmailReturnsConflict() throws Exception {
         RegisterRequestDto registerRequestDto = new RegisterRequestDto(
-                "new-user",
                 "email@example.com",
                 "new-password");
 
         when(authService.createUser(any(RegisterRequestDto.class)))
-                .thenThrow(new AlreadyExistsException("Username or email already exists"));
+                .thenThrow(new AlreadyExistsException("Email already exists"));
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -129,10 +127,9 @@ public class AuthControllerUnitTests {
 
     @Test
     @Order(5)
-    void registerWithInvalidUsernameReturnsBadRequest() throws Exception {
+    void registerWithInvalidEmailReturnsBadRequest() throws Exception {
         RegisterRequestDto registerRequestDto = new RegisterRequestDto(
-                "JK", // invalid username (size must be at least 3 symbols)
-                "email@example.com",
+                "emailexample.com", // invalid email (missing '@')
                 "new-password");
 
         mockMvc.perform(post("/api/auth/register")
@@ -144,7 +141,7 @@ public class AuthControllerUnitTests {
     @Test
     @Order(6)
     void registerWithInvalidJsonReturnsBadRequest() throws Exception {
-        String invalidJson = "{\"username\":\"user\", \"email\":\"email@example.com\"}"; // Missing password
+        String invalidJson = "{\"email\":\"email@example.com\"}"; // Missing password
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)

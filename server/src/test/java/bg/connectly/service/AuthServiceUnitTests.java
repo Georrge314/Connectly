@@ -51,19 +51,19 @@ public class AuthServiceUnitTests {
     @BeforeEach
     void setUp() {
         user = new User();
-        user.setUsername("testuser");
+        user.setEmail("testuser");
         user.setPassword("encodedPassword");
 
         loginRequestDto = new LoginRequestDto("testuser", "password");
         registerRequestDto = new RegisterRequestDto(
-                "newuser", "newuser@example.com", "password");
+                 "newuser@example.com", "password");
 
     }
 
 
     @Test
     void authenticateUserSuccess() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(jwtUtil.generateToken(anyString())).thenReturn("jwtToken");
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
@@ -75,22 +75,22 @@ public class AuthServiceUnitTests {
 
     @Test
     void authenticateUserFailsWithIncorrectPassword() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
         assertThrows(AuthenticationException.class, () -> authService.authenticateUser(loginRequestDto));
     }
 
     @Test
-    void authenticateUserFailsWithNotExistingUsername() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+    void authenticateUserFailsWithNotExistingEmail() {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         assertThrows(AuthenticationException.class, () -> authService.authenticateUser(loginRequestDto));
     }
 
     @Test
     void createUserSuccess() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         when(userMapper.toUser(any(RegisterRequestDto.class))).thenReturn(user);
         when(jwtUtil.generateToken(anyString())).thenReturn("jwtToken");
@@ -101,12 +101,6 @@ public class AuthServiceUnitTests {
         verify(userRepository).save(user);
     }
 
-    @Test
-    void createUserUsernameExists() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
-
-        assertThrows(AlreadyExistsException.class, () -> authService.createUser(registerRequestDto));
-    }
 
     @Test
     void createUserEmailExists() {
@@ -116,11 +110,11 @@ public class AuthServiceUnitTests {
     }
 
     @Test
-    void getUsernameFromToken() {
-        when(jwtUtil.extractUsername(anyString())).thenReturn("testuser");
+    void getEmailFromToken() {
+        when(jwtUtil.extractEmail(anyString())).thenReturn("testuser@abv.bg");
 
-        String username = authService.getUsernameFromToken("Bearer jwtToken");
+        String email = authService.getEmailFromToken("Bearer jwtToken");
 
-        assertEquals("testuser", username);
+        assertEquals("testuser@abv.bg", email);
     }
 }

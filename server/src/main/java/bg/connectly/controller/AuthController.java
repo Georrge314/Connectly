@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +36,7 @@ public class AuthController {
     /**
      * Endpoint for authenticating a user and generating a JWT token.
      *
-     * @param loginRequestDto the login request containing username and password
+     * @param loginRequestDto the login request containing email and password
      * @return a ResponseEntity containing the JWT token
      */
     @Operation(summary = "Authenticate user and generate JWT token")
@@ -46,7 +47,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         String jwtToken = authService.authenticateUser(loginRequestDto);
-        return ResponseEntity.ok().body(new JwtResponse(jwtToken));
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(new JwtResponse(jwtToken));
     }
 
 
@@ -60,7 +61,7 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User registered successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid registration details"),
-            @ApiResponse(responseCode = "409", description = "Username or email already exists"),
+            @ApiResponse(responseCode = "409", description = "Email already exists"),
     })
     @PostMapping("/register")
     public ResponseEntity<JwtResponse> register(@Valid @RequestBody RegisterRequestDto registerRequestDto) {

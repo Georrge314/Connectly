@@ -43,27 +43,27 @@ public class AuthServiceImpl implements AuthService {
     /**
      * Authenticates a user based on the provided login request.
      *
-     * @param loginRequestDto the login request containing username and password
+     * @param loginRequestDto the login request containing email and password
      * @return a JWT token if authentication is successful
      * @throws AuthenticationException if authentication fails
      */
     @Override
     public String authenticateUser(LoginRequestDto loginRequestDto) {
-        logger.info("Authenticating user: {}", loginRequestDto.getUsername());
+        logger.info("Authenticating user: {}", loginRequestDto.getEmail());
         User user = userRepository
-                .findByUsername(loginRequestDto.getUsername())
-                .orElseThrow(() -> new AuthenticationException("Username " + loginRequestDto.getUsername() + " not found"));
+                .findByEmail(loginRequestDto.getEmail())
+                .orElseThrow(() -> new AuthenticationException("Email " + loginRequestDto.getEmail() + " not found"));
 
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            logger.warn("Authentication failed for user: {}", loginRequestDto.getUsername());
+            logger.warn("Authentication failed for user: {}", loginRequestDto.getEmail());
             throw new AuthenticationException("Incorrect password");
         }
 
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
-        logger.info("User authenticated successfully: {}", loginRequestDto.getUsername());
+        logger.info("User authenticated successfully: {}", loginRequestDto.getEmail());
 
-        return jwtUtil.generateToken(user.getUsername());
+        return jwtUtil.generateToken(user.getEmail());
     }
 
     /**
@@ -71,42 +71,42 @@ public class AuthServiceImpl implements AuthService {
      *
      * @param registerRequestDto the register request containing user details
      * @return a JWT token for the newly created user
-     * @throws AlreadyExistsException if the username or email is already taken
+     * @throws AlreadyExistsException if the email or email is already taken
      */
     @Override
     public String createUser(RegisterRequestDto registerRequestDto) {
-        logger.info("Creating user: {}", registerRequestDto.getUsername());
-        validateUsernameAvailability(registerRequestDto.getUsername());
+        logger.info("Creating user: {}", registerRequestDto.getEmail());
+        validateemailAvailability(registerRequestDto.getEmail());
         validateEmailAvailability(registerRequestDto.getEmail());
 
         User user = userMapper.toUser(registerRequestDto);
         userRepository.save(user);
 
-        logger.info("User created successfully: {}", registerRequestDto.getUsername());
-        return jwtUtil.generateToken(user.getUsername());
+        logger.info("User created successfully: {}", registerRequestDto.getEmail());
+        return jwtUtil.generateToken(user.getEmail());
     }
 
     /**
-     * Extracts the username from the provided JWT token.
+     * Extracts the email from the provided JWT token.
      *
      * @param token the JWT token
-     * @return the username extracted from the token
+     * @return the email extracted from the token
      */
     @Override
-    public String getUsernameFromToken(String token) {
-        return jwtUtil.extractUsername(token.substring(7));
+    public String getEmailFromToken(String token) {
+        return jwtUtil.extractEmail(token.substring(7));
     }
 
     /**
-     * Validates the availability of the provided username.
+     * Validates the availability of the provided email.
      *
-     * @param username the username to validate
-     * @throws AlreadyExistsException if the username is already taken
+     * @param email the email to validate
+     * @throws AlreadyExistsException if the email is already taken
      */
-    private void validateUsernameAvailability(String username) {
-        logger.info("Validating username availability: {}", username);
-        userRepository.findByUsername(username).ifPresent(user -> {
-            throw new AlreadyExistsException("Username " + username + " is already taken");
+    private void validateemailAvailability(String email) {
+        logger.info("Validating email availability: {}", email);
+        userRepository.findByEmail(email).ifPresent(user -> {
+            throw new AlreadyExistsException("email " + email + " is already taken");
         });
     }
 

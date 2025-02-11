@@ -6,6 +6,11 @@
           <!-- Registration Header -->
           <h3 class="text-center mb-4">Register</h3>
 
+          <!-- Response Message -->
+          <div *ngIf="responseMessage" class="alert alert-danger" role="alert">
+            {{ responseMessage }}
+          </div>
+
           <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <!-- First Name Field -->
             <div class="mb-3">

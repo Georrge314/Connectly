@@ -48,11 +48,9 @@ public class UserServiceUnitTests {
     @BeforeEach
     void setUp() {
         user = new User();
-        user.setUsername("testuser");
         user.setEmail("testuser@example.com");
 
         userDto = new UserDto();
-        userDto.setUsername("newusername");
         userDto.setEmail("newemail@example.com");
         userDto.setPassword("newpassword");
     }
@@ -72,41 +70,30 @@ public class UserServiceUnitTests {
 
     @Test
     void updateUserSuccess() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user), Optional.empty());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
         when(userMapper.updateUserFromDto(any(UserDto.class), any(User.class))).thenReturn(user);
 
         User updatedUser = userService.updateUser(userDto, "testuser");
 
         assertNotNull(updatedUser);
-        assertEquals("newusername", updatedUser.getUsername());
         assertEquals("newemail@example.com", updatedUser.getEmail());
         verify(userRepository).save(any(User.class));
     }
 
     @Test
     void updateUserNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> userService.updateUser(userDto, "testuser"));
     }
 
     @Test
-    void updateUserUsernameExists() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
-        when(userRepository.findByUsername("newusername")).thenReturn(Optional.of(new User()));
-
-        assertThrows(AlreadyExistsException.class, () -> userService.updateUser(userDto, "testuser"));
-    }
-
-    @Test
     void updateUserEmailExists() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user), Optional.empty());
         when(userRepository.findByEmail("newemail@example.com")).thenReturn(Optional.of(new User()));
 
-        assertThrows(AlreadyExistsException.class, () -> userService.updateUser(userDto, "testuser"));
+        assertThrows(AlreadyExistsException.class, () -> userService.updateUser(userDto, "newemail@example.com"));
     }
 }

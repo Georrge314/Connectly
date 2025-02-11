@@ -50,7 +50,7 @@ public class PostServiceUnitTests {
     @BeforeEach
     void setUp() {
         user = new User();
-        user.setUsername("testuser");
+        user.setEmail("testuser@abv.bg");
 
         post = new Post();
         post.setId(1L);
@@ -61,25 +61,25 @@ public class PostServiceUnitTests {
     }
 
     @Test
-    void getPostsByUsernameSuccess() {
+    void getPostsByEmailSuccess() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Post> postPage = new PageImpl<>(Collections.singletonList(post));
-        when(postRepository.findByAuthorUsername(anyString(), any(Pageable.class))).thenReturn(postPage);
+        when(postRepository.findByAuthorEmail(anyString(), any(Pageable.class))).thenReturn(postPage);
 
-        Page<Post> result = postService.getPostsByUsername("testuser", pageable);
+        Page<Post> result = postService.getPostsByEmail("testuser@abv.bg", pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
-        verify(postRepository).findByAuthorUsername(anyString(), any(Pageable.class));
+        verify(postRepository).findByAuthorEmail(anyString(), any(Pageable.class));
     }
 
     @Test
     void createPostSuccess() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(postMapper.toPost(any(PostDto.class), any(User.class))).thenReturn(post);
         when(postRepository.save(any(Post.class))).thenReturn(post);
 
-        Post result = postService.createPost(postDto, "testuser");
+        Post result = postService.createPost(postDto, "testuser@abv.bg");
 
         assertNotNull(result);
         assertEquals(post.getId(), result.getId());
@@ -88,44 +88,44 @@ public class PostServiceUnitTests {
 
     @Test
     void createPostUserNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> postService.createPost(postDto, "testuser"));
+        assertThrows(NotFoundException.class, () -> postService.createPost(postDto, "testuser@abv.bg"));
     }
 
     @Test
     void deletePostSuccess() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
 
-        postService.deletePost(1L, "testuser");
+        postService.deletePost(1L, "testuser@abv.bg");
 
         verify(postRepository).delete(any(Post.class));
     }
 
     @Test
     void deletePostUserNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> postService.deletePost(1L, "testuser"));
+        assertThrows(NotFoundException.class, () -> postService.deletePost(1L, "testuser@abv.bg"));
     }
 
     @Test
     void deletePostNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(postRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> postService.deletePost(1L, "testuser"));
+        assertThrows(NotFoundException.class, () -> postService.deletePost(1L, "testuser@abv.bg"));
     }
 
     @Test
     void updatePostSuccess() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
         when(postMapper.updatePostFromDto(any(PostDto.class), any(Post.class))).thenReturn(true);
         when(postRepository.save(any(Post.class))).thenReturn(post);
 
-        Post result = postService.updatePost(1L, "testuser", postDto);
+        Post result = postService.updatePost(1L, "testuser@abv.bg", postDto);
 
         assertNotNull(result);
         assertEquals(post.getId(), result.getId());
@@ -134,17 +134,17 @@ public class PostServiceUnitTests {
 
     @Test
     void updatePostUserNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> postService.updatePost(1L, "testuser", postDto));
+        assertThrows(NotFoundException.class, () -> postService.updatePost(1L, "testuser@abv.bg", postDto));
     }
 
     @Test
     void updatePostNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(postRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> postService.updatePost(1L, "testuser", postDto));
+        assertThrows(NotFoundException.class, () -> postService.updatePost(1L, "testuser@abv.bg", postDto));
     }
 
     @Test

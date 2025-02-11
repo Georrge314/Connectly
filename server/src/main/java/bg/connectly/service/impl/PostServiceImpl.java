@@ -40,48 +40,48 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * Fetches posts by the given username.
+     * Fetches posts by the given email.
      *
-     * @param username the username of the author
+     * @param email the email of the author
      * @param pageable the pagination information
-     * @return a page of posts by the given username
+     * @return a page of posts by the given email
      */
     @Override
-    public Page<Post> getPostsByUsername(String username, Pageable pageable) {
-        logger.info("Fetching posts for username: {}", username);
-        return postRepository.findByAuthorUsername(username, pageable);
+    public Page<Post> getPostsByEmail(String email, Pageable pageable) {
+        logger.info("Fetching posts for email: {}", email);
+        return postRepository.findByAuthorEmail(email, pageable);
     }
 
     /**
-     * Creates a new post for the given username.
+     * Creates a new post for the given email.
      *
      * @param postDto the data transfer object containing post details
-     * @param username      the username of the author
+     * @param email      the email of the author
      * @return the created post
      */
     @Override
-    public Post createPost(@Valid PostDto postDto, String username) {
-        logger.info("Creating post for username: {}", username);
+    public Post createPost(@Valid PostDto postDto, String email) {
+        logger.info("Creating post for email: {}", email);
         User existingUser = userRepository
-                .findByUsername(username).orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
+                .findByEmail(email).orElseThrow(() -> new NotFoundException("Email " + email + " not found"));
 
         Post post = postMapper.toPost(postDto, existingUser);
         return postRepository.save(post);
     }
 
     /**
-     * Deletes a post by its ID and the username of the author.
+     * Deletes a post by its ID and the email of the author.
      *
      * @param id       the ID of the post to delete
-     * @param username the username of the author
+     * @param email the email of the author
      */
     @Override
     @Transactional
-    public void deletePost(Long id, String username) {
-        logger.info("Deleting post with id: {} for username: {}", id, username);
+    public void deletePost(Long id, String email) {
+        logger.info("Deleting post with id: {} for email: {}", id, email);
 
         User existingUser = userRepository
-                .findByUsername(username).orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
+                .findByEmail(email).orElseThrow(() -> new NotFoundException("Email " + email + " not found"));
 
         Post existingPost = postRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Post not found"));
@@ -94,19 +94,19 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * Updates a post by its ID and the username of the author.
+     * Updates a post by its ID and the email of the author.
      *
      * @param id            the ID of the post to update
-     * @param username      the username of the author
+     * @param email      the email of the author
      * @param updatePostDto the data transfer object containing updated post details
      * @return the updated post
      */
     @Override
     @Transactional
-    public Post updatePost(Long id, String username, @Valid PostDto updatePostDto) {
-        logger.info("Updating post with id: {} for username: {}", id, username);
+    public Post updatePost(Long id, String email, @Valid PostDto updatePostDto) {
+        logger.info("Updating post with id: {} for email: {}", id, email);
         User existingUser = userRepository
-                .findByUsername(username).orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
+                .findByEmail(email).orElseThrow(() -> new NotFoundException("Email " + email + " not found"));
 
         Post existingPost = postRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Post not found"));

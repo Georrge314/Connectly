@@ -83,10 +83,10 @@ public class PostControllerUnitTests {
         Page<Post> postsPage = new PageImpl<>(Collections.singletonList(post));
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(postService.getPostsByUsername(anyString(), any(Pageable.class))).thenReturn(postsPage);
+        when(postService.getPostsByEmail(anyString(), any(Pageable.class))).thenReturn(postsPage);
 
         mockMvc.perform(get("/api/post/user")
-                        .param("username", "some user")
+                        .param("email", "someuser@abbv.bg")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
@@ -101,7 +101,7 @@ public class PostControllerUnitTests {
         Post post = new Post();
         post.setContent("New Post");
 
-        when(authService.getUsernameFromToken(anyString())).thenReturn("testuser");
+        when(authService.getEmailFromToken(anyString())).thenReturn("testuser@abv.bg");
         when(postService.createPost(any(PostDto.class), anyString())).thenReturn(post);
 
         mockMvc.perform(post("/api/post/add")
@@ -116,7 +116,7 @@ public class PostControllerUnitTests {
     @Test
     @Order(3)
     void deletePostReturnsOk() throws Exception {
-        when(authService.getUsernameFromToken(anyString())).thenReturn("testuser");
+        when(authService.getEmailFromToken(anyString())).thenReturn("testuser@abv.bg");
 
         mockMvc.perform(delete("/api/post/delete/{id}", 1L)
                         .header("Authorization", "Bearer valid-token"))
@@ -131,7 +131,7 @@ public class PostControllerUnitTests {
         Post updatedPost = new Post();
         updatedPost.setContent("Updated Post");
 
-        when(authService.getUsernameFromToken(anyString())).thenReturn("testuser");
+        when(authService.getEmailFromToken(anyString())).thenReturn("testuser@abv.bg");
         when(postService.updatePost(anyLong(), anyString(), any(PostDto.class))).thenReturn(updatedPost);
 
         mockMvc.perform(put("/api/post/update/{id}", 1L)
@@ -150,7 +150,7 @@ public class PostControllerUnitTests {
         Comment comment = new Comment();
         comment.setContent("New Comment");
 
-        when(authService.getUsernameFromToken(anyString())).thenReturn("testuser");
+        when(authService.getEmailFromToken(anyString())).thenReturn("testuser@abv.bg");
         when(commentService.createComment(anyLong(), anyString(), any(CommentDto.class))).thenReturn(comment);
 
         mockMvc.perform(post("/api/post/{postId}/comment", 1L)
@@ -196,7 +196,7 @@ public class PostControllerUnitTests {
         Comment comment = new Comment();
         comment.setContent("Reply Comment");
 
-        when(authService.getUsernameFromToken(anyString())).thenReturn("testuser");
+        when(authService.getEmailFromToken(anyString())).thenReturn("testuser@abv.bg");
         when(commentService.replyToComment(anyLong(), anyString(), any(CommentDto.class))).thenReturn(comment);
 
         mockMvc.perform(post("/api/post/comment/{commentId}/reply", 1L)

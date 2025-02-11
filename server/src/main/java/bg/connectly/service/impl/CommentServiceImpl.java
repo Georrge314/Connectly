@@ -57,19 +57,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
-     * Creates a new comment for a given post ID and username.
+     * Creates a new comment for a given post ID and email.
      *
      * @param postId           the ID of the post
-     * @param username         the username of the author
+     * @param email         the email of the author
      * @param commentDto the data transfer object containing comment details
      * @return the created comment
      */
     @Override
     @Transactional
-    public Comment createComment(Long postId, String username, @Valid CommentDto commentDto) {
-        logger.info("Creating comment for post id: {} by username: {}", postId, username);
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
+    public Comment createComment(Long postId, String email, @Valid CommentDto commentDto) {
+        logger.info("Creating comment for post id: {} by email: {}", postId, email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Email " + email + " not found"));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("Post not found"));
 
@@ -95,19 +95,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
-     * Creates a reply to a comment by its ID and the username of the author.
+     * Creates a reply to a comment by its ID and the email of the author.
      *
      * @param commentId        the ID of the comment to reply to
-     * @param username         the username of the author
+     * @param email         the email of the author
      * @param commentDto the data transfer object containing reply details
      * @return the created reply comment
      */
     @Override
     @Transactional
-    public Comment replyToComment(Long commentId, String username, @Valid CommentDto commentDto) {
-        logger.info("Replying to comment with id: {} by username: {}", commentId, username);
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
+    public Comment replyToComment(Long commentId, String email, @Valid CommentDto commentDto) {
+        logger.info("Replying to comment with id: {} by email: {}", commentId, email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Email " + email + " not found"));
 
         Comment parentComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found"));

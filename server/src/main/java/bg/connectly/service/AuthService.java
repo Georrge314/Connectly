@@ -5,7 +5,7 @@ import bg.connectly.dto.RegisterRequestDto;
 import jakarta.validation.Valid;
 
 public interface AuthService {
-    String getUsernameFromToken(String token);
+    String getEmailFromToken(String token);
 
     String authenticateUser(@Valid LoginRequestDto loginRequestDto);
 

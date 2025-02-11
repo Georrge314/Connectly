@@ -76,11 +76,11 @@ public class UserControllerUnitTests {
     @Order(1)
     void editUserWithValidDataReturnsUpdatedUser() throws Exception {
         UserDto userDto = new UserDto();
-        userDto.setUsername("new-username");
+        userDto.setEmail("new-email@abv.bg");
         User updatedUser = new User();
-        updatedUser.setUsername("new-username");
+        updatedUser.setEmail("new-email@abv.bg");
 
-        when(authService.getUsernameFromToken(anyString())).thenReturn("existing-username");
+        when(authService.getEmailFromToken(anyString())).thenReturn("existing-email");
         when(userService.updateUser(any(UserDto.class), anyString())).thenReturn(updatedUser);
 
         mockMvc.perform(put("/api/user/edit")
@@ -88,14 +88,14 @@ public class UserControllerUnitTests {
                         .header("Authorization", "Bearer valid-token")
                         .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("new-username"));
+                .andExpect(jsonPath("$.email").value("new-email@abv.bg"));
     }
 
     @Test
     @Order(2)
     void editUserWithInvalidDataReturnsBadRequest() throws Exception {
         UserDto userDto = new UserDto();
-        userDto.setUsername("JK"); //Invalid username
+        userDto.setEmail("invalid-mail.com"); //Invalid email
 
         mockMvc.perform(put("/api/user/edit")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,9 +108,9 @@ public class UserControllerUnitTests {
     @Order(3)
     void editUserWithInvalidTokenReturnsUnauthorized() throws Exception {
         UserDto userDto = new UserDto();
-        userDto.setUsername("new-username");
+        userDto.setEmail("new-email@abv.bg");
 
-        when(authService.getUsernameFromToken(anyString())).thenThrow(new AuthenticationException("Unauthorized"));
+        when(authService.getEmailFromToken(anyString())).thenThrow(new AuthenticationException("Unauthorized"));
 
         mockMvc.perform(put("/api/user/edit")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,10 +123,10 @@ public class UserControllerUnitTests {
     @Order(4)
     void searchUsersWithValidSearchTextReturnsUsers() throws Exception {
         User user = new User();
-        user.setUsername("test-user");
+        user.setEmail("test-user@abv.bg");
 
         User anthorUser = new User();
-        anthorUser.setUsername("test-user2");
+        anthorUser.setEmail("test-user2@abv.bg");
 
         Page<User> usersPage = new PageImpl<>(List.of(user, anthorUser));
 
@@ -137,8 +137,8 @@ public class UserControllerUnitTests {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].username").value("test-user"))
-                .andExpect(jsonPath("$.content[1].username").value("test-user2"));
+                .andExpect(jsonPath("$.content[0].email").value("test-user@abv.bg"))
+                .andExpect(jsonPath("$.content[1].email").value("test-user2@abv.bg"));
     }
 
     @Test

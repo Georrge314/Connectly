@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Searches for users based on the provided search text.
-     * The search is performed on username, email, first name, and last name fields.
+     * The search is performed on email, first name, and last name fields.
      *
      * @param searchText the text to search for
      * @param pageable   the pagination information
@@ -50,57 +50,39 @@ public class UserServiceImpl implements UserService {
             String likeSearch = "%" + searchText.toLowerCase() + "%";
 
             // Create predicates for each field to search
-            Predicate usernamePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("username")), likeSearch);
             Predicate emailPredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), likeSearch);
             Predicate firstNamePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")), likeSearch);
             Predicate lastNamePredicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")), likeSearch);
 
             // Combine all the predicates using a logical OR
-            return criteriaBuilder.or(usernamePredicate, emailPredicate, firstNamePredicate, lastNamePredicate);
+            return criteriaBuilder.or(emailPredicate, firstNamePredicate, lastNamePredicate);
         }, pageable);
     }
 
     /**
      * Updates the user information based on the provided EditUserDto.
-     * Validates the availability of the new username and email if they are changed.
+     * Validates the availability of the new email if they are changed.
      *
      * @param userDto  the user data transfer object containing updated information
-     * @param username the username of the user to update
+     * @param email the email of the user to update
      * @return the updated user
      */
     @Override
-    public User updateUser(UserDto userDto, String username) {
-        logger.info("Updating user: {}", username);
-        User existingUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("Username " + username + " not found"));
+    public User updateUser(UserDto userDto, String email) {
+        logger.info("Updating user: {}", email);
+        User existingUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Email " + email + " not found"));
 
-        // Validate the availability of the new username and email if they are changed
-        if (userDto.getUsername() != null && !userDto.getUsername().equals(existingUser.getUsername())) {
-            validateUsernameAvailability(userDto.getUsername());
-        }
+        // Validate the availability of the new email if they are changed
         if (userDto.getEmail() != null && !userDto.getEmail().equals(existingUser.getEmail())) {
             validateEmailAvailability(userDto.getEmail());
         }
 
         existingUser = userMapper.updateUserFromDto(userDto, existingUser);
-        logger.info("User updated successfully: {}", username);
+        logger.info("User updated successfully: {}", email);
         return userRepository.save(existingUser);
     }
 
-
-    /**
-     * Validates the availability of the provided username.
-     * Logs the validation process and checks if the username is already taken.
-     * If the username is already taken, throws an AlreadyExistsException.
-     *
-     * @param newUsername the username to validate
-     */
-    private void validateUsernameAvailability(String newUsername) {
-        logger.info("Validating username availability: {}", newUsername);
-        userRepository.findByUsername(newUsername).ifPresent(user -> {
-            throw new AlreadyExistsException("Username " + newUsername + " is already taken");
-        });
-    }
 
     /**
      * Validates the availability of the provided email address.

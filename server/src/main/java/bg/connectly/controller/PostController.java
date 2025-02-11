@@ -42,19 +42,19 @@ public class PostController {
     }
 
     /**
-     * Endpoint for retrieving posts by username.
+     * Endpoint for retrieving posts by email.
      *
-     * @param username the username of the author
+     * @param email the email of the author
      * @param pageable the pagination information
-     * @return a page of posts by the given username
+     * @return a page of posts by the given email
      */
-    @Operation(summary = "Get posts by username")
+    @Operation(summary = "Get posts by email")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Posts retrieved successfully"),
     })
     @GetMapping("/user")
-    public ResponseEntity<Page<Post>> getUserPosts(@RequestParam String username, Pageable pageable) {
-        Page<Post> posts = postService.getPostsByUsername(username, pageable);
+    public ResponseEntity<Page<Post>> getUserPosts(@RequestParam String email, Pageable pageable) {
+        Page<Post> posts = postService.getPostsByEmail(email, pageable);
         return ResponseEntity.ok(posts);
     }
 
@@ -92,8 +92,8 @@ public class PostController {
     @PostMapping("/add")
     public ResponseEntity<Post> createPost(@Valid @RequestBody PostDto postDto,
                                            @RequestHeader("Authorization") String token) {
-        String username = authService.getUsernameFromToken(token);
-        Post post = postService.createPost(postDto, username);
+        String email = authService.getEmailFromToken(token);
+        Post post = postService.createPost(postDto, email);
         return ResponseEntity.ok(post);
     }
 
@@ -113,8 +113,8 @@ public class PostController {
     })
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        String username = authService.getUsernameFromToken(token);
-        postService.deletePost(id, username);
+        String email = authService.getEmailFromToken(token);
+        postService.deletePost(id, email);
         return ResponseEntity.ok().build();
     }
 
@@ -137,8 +137,8 @@ public class PostController {
     public ResponseEntity<Post> updatePost(@PathVariable Long id,
                                            @RequestHeader("Authorization") String token,
                                            @Valid @RequestBody PostDto updatePostDto) {
-        String username = authService.getUsernameFromToken(token);
-        Post updatedPost = postService.updatePost(id, username, updatePostDto);
+        String email = authService.getEmailFromToken(token);
+        Post updatedPost = postService.updatePost(id, email, updatePostDto);
         return ResponseEntity.ok(updatedPost);
     }
 
@@ -161,8 +161,8 @@ public class PostController {
     public ResponseEntity<Comment> addComment(@PathVariable Long postId,
                                               @RequestHeader("Authorization") String token,
                                               @Valid @RequestBody CommentDto commentDto) {
-        String username = authService.getUsernameFromToken(token);
-        Comment comment = commentService.createComment(postId, username, commentDto);
+        String email = authService.getEmailFromToken(token);
+        Comment comment = commentService.createComment(postId, email, commentDto);
         return ResponseEntity.ok(comment);
     }
 
@@ -219,8 +219,8 @@ public class PostController {
     public ResponseEntity<Comment> replyToComment(@PathVariable Long commentId,
                                                   @RequestHeader("Authorization") String token,
                                                   @Valid @RequestBody CommentDto commentDto) {
-        String username = authService.getUsernameFromToken(token);
-        Comment comment = commentService.replyToComment(commentId, username, commentDto);
+        String email = authService.getEmailFromToken(token);
+        Comment comment = commentService.replyToComment(commentId, email, commentDto);
         return ResponseEntity.ok(comment);
     }
 }

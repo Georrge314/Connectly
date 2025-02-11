@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -7,11 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
 import { AuthenticationService } from '../../api/api/authentication.service';
 import { LoginRequestDto } from '../../api/model/loginRequestDto';
-import { JwtResponse } from '../../api';
-import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -26,33 +23,37 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required]], // TODO Validators.email
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
   async onSubmit() {
     if (this.loginForm.valid) {
+
       const loginRequest: LoginRequestDto = {
-        username: this.loginForm.value.email,
+        email: this.loginForm.value.email,
         password: this.loginForm.value.password,
       };
 
       this.authService.login(loginRequest).subscribe({
-        next: (response: JwtResponse) => {
-          console.log('Response:', response); // Access the full
-          console.log('Token:', response.token); // Access the JWT token
+        next: async (response: any) => {
+          const text = await response.text();
+          const json = JSON.parse(text);
+          
+          localStorage.setItem('token', json.token);
+          this.router.navigate(['/']);
         },
-        error: (error) => {
-          console.error('Login error:', error);
-          this.responseMessage = 'Login failed. Please check your credentials.';
+        error: async (error) => {
+          const errorMessage = await error.error.text();
+          this.responseMessage = errorMessage
         },
       });
+
     }
   }
-
-
 }

@@ -53,7 +53,7 @@ public class CommentServiceUnitTests {
     @BeforeEach
     void setUp() {
         user = new User();
-        user.setUsername("testuser");
+        user.setEmail("testuser@abv.bg");
 
         post = new Post();
         post.setId(1L);
@@ -80,12 +80,12 @@ public class CommentServiceUnitTests {
 
     @Test
     void createCommentSuccess() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
         when(commentMapper.toComment(eq(commentDto), eq(user), eq(post), isNull())).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
-        Comment result = commentService.createComment(1L, "testuser", commentDto);
+        Comment result = commentService.createComment(1L, "testuser@abv.bg", commentDto);
 
         assertNotNull(result);
         assertEquals(comment.getId(), result.getId());
@@ -94,17 +94,17 @@ public class CommentServiceUnitTests {
 
     @Test
     void createCommentUserNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> commentService.createComment(1L, "testuser", commentDto));
+        assertThrows(NotFoundException.class, () -> commentService.createComment(1L, "testuser@abv.bg", commentDto));
     }
 
     @Test
     void createCommentPostNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(postRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> commentService.createComment(1L, "testuser", commentDto));
+        assertThrows(NotFoundException.class, () -> commentService.createComment(1L, "testuser@abv.bg", commentDto));
     }
 
     @Test
@@ -128,12 +128,12 @@ public class CommentServiceUnitTests {
 
     @Test
     void replyToCommentSuccess() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
         when(commentMapper.toComment(any(CommentDto.class), any(User.class), any(Post.class), any(Comment.class))).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment, comment);
 
-        Comment result = commentService.replyToComment(1L, "testuser", commentDto);
+        Comment result = commentService.replyToComment(1L, "testuser@abv.bg", commentDto);
 
         assertNotNull(result);
         assertEquals(comment.getId(), result.getId());
@@ -141,16 +141,16 @@ public class CommentServiceUnitTests {
 
     @Test
     void replyToCommentUserNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> commentService.replyToComment(1L, "testuser", commentDto));
+        assertThrows(NotFoundException.class, () -> commentService.replyToComment(1L, "testuser@abv.bg", commentDto));
     }
 
     @Test
     void replyToCommentNotFound() {
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(commentRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> commentService.replyToComment(1L, "testuser", commentDto));
+        assertThrows(NotFoundException.class, () -> commentService.replyToComment(1L, "testuser@abv.bg", commentDto));
     }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -10,6 +10,7 @@ import {
 import { AuthenticationService } from '../../api/api/authentication.service';
 import { passwordMatchValidator } from './password-match.validator';
 import { CommonModule } from '@angular/common';
+import { RegisterRequestDto } from '../../api/model/registerRequestDto';
 
 @Component({
   selector: 'app-register',
@@ -20,8 +21,13 @@ import { CommonModule } from '@angular/common';
 })
 export class RegisterComponent {
   registerForm: FormGroup;
-  
-  constructor(private fb: FormBuilder, private authService: AuthenticationService) {
+  responseMessage: string | null = null;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthenticationService,
+    private router: Router
+  ) {
     this.registerForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -35,8 +41,26 @@ export class RegisterComponent {
 
   onSubmit() {
     if (this.registerForm.valid) {
-     
-      //TODO: Implement the registration logic here
+      const registerRequest: RegisterRequestDto = {
+        email: this.registerForm.value.email,
+        password: this.registerForm.value.password,
+        firstName: this.registerForm.value.firstName,
+        lastName: this.registerForm.value.lastName,
+      };
+
+      this.authService.register(registerRequest).subscribe({
+        next: async (response: any) => {
+          const text = await response.text();
+          const json = JSON.parse(text);
+          
+          localStorage.setItem('token', json.token);
+          this.router.navigate(['/']);
+        },
+        error: async (error) => {
+          const errorMessage = await error.error.text();
+          this.responseMessage = errorMessage
+        },
+      });
     }
   }
 }

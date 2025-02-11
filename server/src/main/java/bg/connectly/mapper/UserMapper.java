@@ -31,7 +31,6 @@ public class UserMapper {
     public User toUser(RegisterRequestDto registerRequestDto) {
         //required fields
         User user = new User();
-        user.setUsername(registerRequestDto.getUsername());
         user.setEmail(registerRequestDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
 
@@ -61,10 +60,6 @@ public class UserMapper {
 
         //Update the existing user fields if they are different from the user dto
 
-        if (userDto.getUsername() != null && !userDto.getUsername().equals(user.getUsername())) {
-            user.setUsername(userDto.getUsername());
-            isUpdated = true;
-        }
         if (userDto.getEmail() != null && !userDto.getEmail().equals(user.getEmail())) {
             user.setEmail(userDto.getEmail());
             isUpdated = true;

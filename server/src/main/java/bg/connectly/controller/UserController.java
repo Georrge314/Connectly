@@ -48,8 +48,8 @@ public class UserController {
     @PutMapping("/edit")
     public ResponseEntity<User> editUser(@Valid @RequestBody UserDto userDto,
                                          @RequestHeader("Authorization") String token) {
-        String username = authService.getUsernameFromToken(token);
-        User user = this.userService.updateUser(userDto, username);
+        String email = authService.getEmailFromToken(token);
+        User user = this.userService.updateUser(userDto, email);
         return ResponseEntity.ok(user);
     }
 
