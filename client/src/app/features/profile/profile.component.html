@@ -1,16 +1,16 @@
-<div class="container profile-container my-5">
+<div class="container-fluid profile-container">
     <div class="row">
       <!-- Profile Header -->
       <div class="col-12 text-center">
         <img
-          src="https://via.placeholder.com/120"
+          [src]="userProfile.avatarUrl"
           alt="User Avatar"
           class="rounded-circle mb-3"
           style="width: 120px; height: 120px;"
         />
-        <h2 class="mb-0">John Doe</h2>
-        <p class="text-muted">Web Developer | Tech Enthusiast</p>
-        <button class="btn btn-outline-primary btn-sm mt-2">Edit Profile</button>
+        <h2 class="mb-0">{{userProfile.name}}</h2>
+        <p class="text-muted">{{userProfile.bio}}</p>
+        <button class="btn btn-outline-primary btn-sm mt-2" (click)="editProfile()" >Edit Profile</button>
       </div>
     </div>
   
@@ -35,9 +35,9 @@
     <div class="tab-content mt-4">
       <!-- Posts Section -->
       <div class="tab-pane fade show active" id="postsTab">
-        <div class="feed-post bg-white p-3 shadow-sm rounded mb-4">
-          <h5>My First Post</h5>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum.</p>
+        <div *ngFor="let post of userProfile.posts" class="feed-post bg-white p-3 shadow-sm rounded mb-4">
+          <h5>{{post.title}}</h5>
+          <p>{{post.content}}</p>
         </div>
       </div>
   
@@ -45,38 +45,31 @@
       <div class="tab-pane fade" id="aboutTab">
         <ul class="list-group">
           <li class="list-group-item">
-            <strong>Email:</strong> john.doeexample.com
+            <strong>Email:</strong> {{userProfile.email}}
           </li>
           <li class="list-group-item">
-            <strong>Location:</strong> New York, USA
+            <strong>Location:</strong> {{userProfile.location}}
           </li>
           <li class="list-group-item">
-            <strong>Joined:</strong> January 2023
+            <strong>Joined:</strong> {{userProfile.joinedDate}}
           </li>
         </ul>
       </div>
   
       <!-- Friends Section -->
       <div class="tab-pane fade" id="friendsTab">
-        <div class="d-flex align-items-center mb-3">
+        <div *ngFor="let friend of userProfile.friends" class="d-flex align-items-center mb-3">
           <img
-            src="https://via.placeholder.com/40"
+            [src]="friend.avatarUrl"
             alt="Friend Avatar"
             class="rounded-circle me-2"
             style="width: 40px; height: 40px;"
           />
-          <span>Jane Smith</span>
-        </div>
-        <div class="d-flex align-items-center">
-          <img
-            src="https://via.placeholder.com/40"
-            alt="Friend Avatar"
-            class="rounded-circle me-2"
-            style="width: 40px; height: 40px;"
-          />
-          <span>Mark Johnson</span>
+          <span>{{friend.name}}</span>
         </div>
       </div>
+
     </div>
+
   </div>
   

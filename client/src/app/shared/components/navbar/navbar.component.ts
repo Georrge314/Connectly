@@ -15,4 +15,8 @@ export class NavbarComponent {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
+
+  goToProfile() {
+    this.router.navigate(['/profile']);
+  }
 }

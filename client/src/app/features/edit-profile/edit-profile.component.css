@@ -1,0 +1,19 @@
+.edit-profile-container {
+    padding-top: 80px;
+    height: calc(100vh - 80px);
+    overflow-y: auto; /* Enable scrolling if content exceeds the viewport */
+}
+
+img.rounded-circle {
+    border: 2px solid var(--orange-two-color);
+}
+
+.btn-outline-primary {
+    border-color: var(--yellow-color);
+    color: var(--yellow-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--yellow-color);
+    color: #fff;
+}
