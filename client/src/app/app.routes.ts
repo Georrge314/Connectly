@@ -1,13 +1,16 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     {
         path: '', 
-        loadComponent: () => import('./features/home/home.component').then(mod => mod.HomeComponent)
+        loadComponent: () => import('./features/home/home.component').then(mod => mod.HomeComponent),
+        canActivate: [AuthGuard]
     },
     {
         path: 'profile', 
-        loadComponent: () => import('./features/profile/profile.component').then(mod => mod.ProfileComponent)
+        loadComponent: () => import('./features/profile/profile.component').then(mod => mod.ProfileComponent),
+        canActivate: [AuthGuard]
     },
     {
         path: 'login', 
@@ -18,11 +21,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/register/register.component').then(mod => mod.RegisterComponent)
     },
     {
-        path: 'profile', 
-        loadComponent: () => import('./features/profile/profile.component').then(mod => mod.ProfileComponent)
+        path: 'edit-profile',
+        loadComponent: () => import('./features/edit-profile/edit-profile.component').then(mod => mod.EditProfileComponent),
+        canActivate: [AuthGuard]
     },
     {
-        path:'edit-profile',
-        loadComponent: () => import('./features/edit-profile/edit-profile.component').then(mod => mod.EditProfileComponent)
-    }    
+        path: '**',
+        redirectTo: '/login'
+    }
 ];
