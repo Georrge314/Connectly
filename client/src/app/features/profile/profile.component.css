@@ -1,6 +1,7 @@
 .profile-container {
     padding-top: 80px;
     height: calc(100vh - 80px);
+    max-width: max-content;
     overflow-y: auto; /* Enable scrolling if feed content exceeds the viewport */
 }
 

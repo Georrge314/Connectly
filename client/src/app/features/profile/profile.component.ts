@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { FeedComponent } from '../feed/feed.component';
+import { RightSidebarComponent } from '../right-sidebar/right-sidebar.component';
 
 interface UserProfile {
   avatarUrl: string;
@@ -16,7 +18,7 @@ interface UserProfile {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FeedComponent, RightSidebarComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })

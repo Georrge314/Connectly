@@ -10,7 +10,9 @@
         />
         <h2 class="mb-0">{{userProfile.name}}</h2>
         <p class="text-muted">{{userProfile.bio}}</p>
-        <button class="btn btn-outline-primary btn-sm mt-2" (click)="editProfile()" >Edit Profile</button>
+        <button class="btn btn-outline-primary btn-sm mt-2 me-2" (click)="editProfile()" >Edit Profile</button>
+        <button class="btn btn-outline-primary btn-sm mt-2 me-2" (click)="editProfile()" >Send Friend Request</button>
+        <button class="btn btn-outline-primary btn-sm mt-2 me-2" (click)="editProfile()" >Open Chat</button>
       </div>
     </div>
   
@@ -18,9 +20,6 @@
     <div class="row mt-4">
       <div class="col-12">
         <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#postsTab">Posts</button>
-          </li>
           <li class="nav-item">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#aboutTab">About</button>
           </li>
@@ -33,14 +32,6 @@
   
     <!-- Tab Content -->
     <div class="tab-content mt-4">
-      <!-- Posts Section -->
-      <div class="tab-pane fade show active" id="postsTab">
-        <div *ngFor="let post of userProfile.posts" class="feed-post bg-white p-3 shadow-sm rounded mb-4">
-          <h5>{{post.title}}</h5>
-          <p>{{post.content}}</p>
-        </div>
-      </div>
-  
       <!-- About Section -->
       <div class="tab-pane fade" id="aboutTab">
         <ul class="list-group">
@@ -71,5 +62,11 @@
 
     </div>
 
+    <app-feed [email]="userProfile.email"></app-feed>
+
+    <!-- Right Sidebar -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <app-right-sidebar></app-right-sidebar>
+    </div>
   </div>
   

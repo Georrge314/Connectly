@@ -4,7 +4,7 @@
   
   <!-- New Post Form -->
   <div class="new-post-form bg-white p-3 shadow-sm rounded mb-4">
-    <form (submit)="createPost(newPostContent.value, newPostImages.value.split(','), newPostVideo.value, newPostLocation.value)">
+    <form [formGroup] = "postForm" (ngSubmit)="createPost()">
       <div class="d-flex align-items-start mb-3">
         <img
           src="https://64.media.tumblr.com/fababb2954021811072b391f73db1413/91b45c92c3c50f84-c7/s1280x1920/bbdba078377976b577e5f2e5882d16d59e336613.png"
@@ -12,20 +12,20 @@
           class="rounded-circle me-2"
           style="width: 40px; height: 40px;"
         />
-        <textarea class="form-control" placeholder="What's on your mind?" #newPostContent rows="3"></textarea>
+        <textarea class="form-control" formControlName="content" placeholder="What's on your mind?" #newPostContent rows="3" required=""></textarea>
       </div>
   
       <!-- Image URLs Input (Multiple, comma-separated) -->
-      <input type="text" class="form-control mb-2" placeholder="Add multiple image URLs (comma-separated)..." #newPostImages />
+      <input type="text" class="form-control mb-2" formControlName="imageUrls" placeholder="Add multiple image URLs (comma-separated)..." #newPostImages />
   
       <!-- Video URL Input (Only One) -->
-      <input type="text" class="form-control mb-2" placeholder="Add video URL..." #newPostVideo />
+      <input type="text" class="form-control mb-2" formArrayName="videoUrl" placeholder="Add video URL..." #newPostVideo />
   
       <!-- Location Input -->
-      <input type="text" class="form-control mb-2" placeholder="Add your location..." #newPostLocation />
+      <input type="text" class="form-control mb-2" formArrayName="location" placeholder="Add your location..." #newPostLocation />
   
       <div class="d-flex justify-content-end">
-        <button type="submit" class="btn post-button">Post</button>
+        <button type="submit" class="btn post-button" [disabled]="postForm.invalid">Post</button>
       </div>
     </form>
   </div>
