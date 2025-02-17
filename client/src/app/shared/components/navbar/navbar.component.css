@@ -1,12 +1,3 @@
-.navbar-toggler {
-    border-color: white;
-    color: white;
-}
-
-.navbar-toggler-icon {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23ffffff' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-}
-
 .navbar-desktop {
     position: fixed;
     top: 0;
@@ -19,18 +10,22 @@
     color: white;
 }
 
-/* Change dropdown item hover background */
 .dropdown-item:hover {
     background-color: var(--orange-two-color);
     color: white;
 }
 
-/* Add spacing between icon and text */
 .nav-link i {
     margin-right: 5px;
 }
 
-/* Customize dropdown arrow color */
 .dropdown-toggle::after {
     color: var(--yellow-color);
+}
+
+.search-button {
+    background-color: var(--orange-color);
+    color: white;
+    border: none;
+    border-radius: 0;
 }

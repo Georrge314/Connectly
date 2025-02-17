@@ -1,14 +1,19 @@
 .right-sidebar {
-    width: 300px;
-    overflow-y: auto;
-    height: calc(80vh - 80px);
-    position: fixed;
-    right: 0;
-    top: 80px;
-  }
-  
-  .search-bar input {
-    border-radius: 20px;
-    padding: 0.5rem 1rem;
-  }
-  
+  width: 300px;
+  overflow-y: auto;
+  height: calc(80vh - 80px);
+  position: fixed;
+  right: 0;
+  top: 80px;
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+.right-sidebar::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+.search-bar input {
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+}

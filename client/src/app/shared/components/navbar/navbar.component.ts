@@ -26,4 +26,11 @@ export class NavbarComponent {
   goToProfile() {
     this.router.navigate(['/profile']);
   }
+
+  onSearch(query: string) {
+    // Implement search functionality here
+    console.log('Search query:', query);
+    // Navigate to search results page or perform search logic
+    // this.router.navigate(['/search'], { queryParams: { q: query } });
+  }
 }

@@ -13,4 +13,22 @@
     padding-top: 80px;
     height: calc(100vh - 80px);
     overflow-y: auto; /* Enable scrolling if feed content exceeds the viewport */
+    overflow-y: auto;
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+.feed-container::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+}
+
+.post-button {
+    background-color: var(--orange-one-color);
+    border-color: var(--orange-one-color);
+    color: white;
+}
+
+.post-button:hover {
+    background-color: var(--orange-two-color);
+    border-color: var(--orange-two-color);
 }

@@ -215,4 +215,6 @@ export class FeedComponent {
   toggleComments(post: Post) {
     post.showComments = !post.showComments;
   }
+
+  createPost(content: string, imageUrls: string[], videoUrl: string, location: string) {}
 }

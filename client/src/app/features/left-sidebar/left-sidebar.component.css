@@ -1,0 +1,26 @@
+.left-sidebar {
+    width: 250px;
+    position: fixed;
+    top: 80px; /* Adjust based on your navbar height */
+    left: 0;
+    max-height: calc(100vh - 80px); /* Adjust based on your navbar height */
+    background-color: #f8f9fa;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.left-sidebar .list-group-item {
+    border: none;
+    padding: 10px 15px;
+}
+
+.left-sidebar .list-group-item a {
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+.left-sidebar .list-group-item a i {
+    margin-right: 10px;
+}

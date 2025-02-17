@@ -1,4 +1,37 @@
 <div class="container feed-container my-4">
+  
+  
+  
+  <!-- New Post Form -->
+  <div class="new-post-form bg-white p-3 shadow-sm rounded mb-4">
+    <form (submit)="createPost(newPostContent.value, newPostImages.value.split(','), newPostVideo.value, newPostLocation.value)">
+      <div class="d-flex align-items-start mb-3">
+        <img
+          src="https://64.media.tumblr.com/fababb2954021811072b391f73db1413/91b45c92c3c50f84-c7/s1280x1920/bbdba078377976b577e5f2e5882d16d59e336613.png"
+          alt="User Avatar"
+          class="rounded-circle me-2"
+          style="width: 40px; height: 40px;"
+        />
+        <textarea class="form-control" placeholder="What's on your mind?" #newPostContent rows="3"></textarea>
+      </div>
+  
+      <!-- Image URLs Input (Multiple, comma-separated) -->
+      <input type="text" class="form-control mb-2" placeholder="Add multiple image URLs (comma-separated)..." #newPostImages />
+  
+      <!-- Video URL Input (Only One) -->
+      <input type="text" class="form-control mb-2" placeholder="Add video URL..." #newPostVideo />
+  
+      <!-- Location Input -->
+      <input type="text" class="form-control mb-2" placeholder="Add your location..." #newPostLocation />
+  
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn post-button">Post</button>
+      </div>
+    </form>
+  </div>
+
+
+
   <div class="feed-posts mt-4">
     <!-- Single Post -->
     <div
@@ -13,11 +46,13 @@
           class="rounded-circle me-2"
           style="width: 40px; height: 40px"
         />
+
         <div>
           <h6 class="mb-0">{{ post.userName }}</h6>
           <small class="text-muted">{{ post.timeAgo }}</small>
         </div>
       </div>
+
       <!-- Post Content -->
       <p>{{ post.content }}</p>
       <img
@@ -38,6 +73,7 @@
           <i class="fas fa-share"></i> Share ({{ post.shares }})
         </button>
       </div>
+
       <!-- Comments Section -->
       <div class="mt-3" *ngIf="post.showComments">
         <div
